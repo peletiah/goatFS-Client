@@ -7,13 +7,14 @@ import Catalyst from 'react-catalyst';
 import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
 import cookie from 'react-cookie';
+import Menu from './Menu';
 import Login from './Login';
 import Hello from './Hello';
 
 @autobind
 class App extends React.Component {
-  construct() {
-    super.construct();
+  constructor() {
+    super();
 
     this.state = {
       csrfToken : '',
@@ -41,10 +42,10 @@ class App extends React.Component {
       .catch(e => console.log("Error"))
     }
 
-
   render() {
     return (
       <div>
+        <Menu csrfToken={this.state.csrfToken}/>
         <Login/>
         <Hello fetchLog={this.fetchLog} log={this.state.log}/>
       </div>
