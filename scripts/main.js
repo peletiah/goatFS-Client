@@ -5,7 +5,7 @@ import { createHistory } from 'history';
 
 import App from './components/App';
 import Home from './components/Home';
-import Login from './components/Login';
+import LoginForm from './components/LoginForm';
 import Hello from './components/Hello';
 import NotFound from './components/NotFound';
 
@@ -16,7 +16,7 @@ import NotFound from './components/NotFound';
 var routes = (
   <Router history={createHistory()}>
     <Route path="/" component={App}/>
-    <Route path="/login" component={Login}/>
+    <Route path="/login" component={LoginForm}/>
     <Route path="/hello" component={Hello}/>
     <Route path="*" component={NotFound}/>
   </Router>

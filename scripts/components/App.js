@@ -8,7 +8,7 @@ import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
 import cookie from 'react-cookie';
 import Menu from './Menu';
-import Login from './Login';
+import LoginForm from './LoginForm';
 import Hello from './Hello';
 
 @autobind
@@ -23,8 +23,15 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    this.setCSRFToken()
+  }
+
+
+  setCSRFToken() {
     console.log('Checking for csrf-cookie')
     this.state = { csrfToken : cookie.load('csrf') };
+    this.setState({ csrfToken : this.state.csrfToken });
+    console.log('csrfToken is '+this.state.csrfToken)
   }
 
 
@@ -42,12 +49,21 @@ class App extends React.Component {
       .catch(e => console.log("Error"))
     }
 
+
+
   render() {
+    if (!this.state.csrfToken) {
+      return (
+        <div>
+          <LoginForm setCSRFToken={this.setCSRFToken}/>
+        </div>
+      )
+    }
+
     return (
       <div>
-        <Menu csrfToken={this.state.csrfToken}/>
-        <Login/>
-        <Hello fetchLog={this.fetchLog} log={this.state.log}/>
+        <Menu csrfToken={this.state.csrfToken} />
+        {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
       </div>
     )
   }
