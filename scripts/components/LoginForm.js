@@ -46,6 +46,7 @@ class LoginForm extends React.Component {
   render() {
     return (
       <div>
+        {console.log('Entered LoginForm')}
         <form ref="loginForm" onSubmit={this.authenticate}>
           <p>
             <label>Login</label><br/>

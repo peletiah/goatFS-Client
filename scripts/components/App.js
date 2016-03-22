@@ -10,6 +10,7 @@ import cookie from 'react-cookie';
 import Menu from './Menu';
 import LoginForm from './LoginForm';
 import Hello from './Hello';
+import RouteHandler from 'react-router'
 
 @autobind
 class App extends React.Component {
@@ -35,6 +36,11 @@ class App extends React.Component {
   }
 
 
+  loggedIn() {
+    return !!this.state.csrfToken
+  }
+
+
   fetchLog() {
     console.log('Fetching Log from server')
     fetch('http://localhost:6543/hello', {
@@ -52,23 +58,23 @@ class App extends React.Component {
 
 
   render() {
-    if (!this.state.csrfToken) {
+    {/*if (!this.state.csrfToken) {
       return (
         <div>
           <LoginForm setCSRFToken={this.setCSRFToken}/>
         </div>
       )
-    }
+    }*/}
 
     return (
       <div>
-        <Menu csrfToken={this.state.csrfToken} />
+        <Menu csrfToken={this.state.csrfToken} {...this.props}/>
+        {this.props.children /*returns the components propagated by router*/}
+        <div>YaddaYadda: {this.loggedIn().toString()}</div>
         {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
       </div>
     )
   }
 };
-
-
 
 export default App    

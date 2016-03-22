@@ -3,6 +3,7 @@
 */
 
 import React from 'react';
+import { Link } from 'react-router';
 import Catalyst from 'react-catalyst';
 import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
@@ -37,7 +38,7 @@ class Menu extends React.Component {
     console.debug('Rendering Menu Items')
     return(
       <li className="nav-item" key={this.state.menu[key].id}>
-        <a className="nav-link" href={this.state.menu[key].location}>{this.state.menu[key].name}</a>
+        <Link className="nav-link" to={this.state.menu[key].location}>{this.state.menu[key].name}</Link>
       </li>
     )
   }
@@ -51,7 +52,7 @@ class Menu extends React.Component {
           <nav className="navbar navbar-light bg-faded">
             <a className="navbar-brand" href="#">GoatFS</a>
             <ul className="nav navbar-nav">
-              {Object.keys(this.state.menu).map(this.renderMenu)}
+            {Object.keys(this.state.menu).map(this.renderMenu)}
             </ul>
             <form className="form-inline pull-xs-right">
               <input className="form-control" type="text" placeholder="Search"/>
@@ -63,5 +64,4 @@ class Menu extends React.Component {
     }
 
 };
-
 export default Menu
