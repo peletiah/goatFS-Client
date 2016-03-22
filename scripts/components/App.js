@@ -63,7 +63,7 @@ class App extends React.Component {
     return (
       <div>
         <Menu csrfToken={this.state.csrfToken} />
-        {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
+        <Hello fetchLog={this.fetchLog} log={this.state.log}/>
       </div>
     )
   }
