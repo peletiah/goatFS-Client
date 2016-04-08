@@ -29,6 +29,7 @@ class LoginForm extends React.Component {
         password : this.refs.password.value
     }
 
+    console.log(this.state)
     console.log('putting login')
     fetch('http://localhost:6543/sign_in', {
       method: "PUT",
@@ -39,7 +40,6 @@ class LoginForm extends React.Component {
       credentials: 'include'
     }).then(r => this.props.setCSRFToken())
     .catch(e => console.log("Error "+e))
-
   }
 
 

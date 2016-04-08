@@ -25,6 +25,7 @@ class App extends React.Component {
 
   componentWillMount() {
     this.setCSRFToken()
+    this.loggedIn()
   }
 
 
@@ -32,6 +33,7 @@ class App extends React.Component {
     console.log('Checking for csrf-cookie')
     this.state = { csrfToken : cookie.load('csrf') };
     this.setState({ csrfToken : this.state.csrfToken });
+    localStorage.loggedin = !!this.state.csrfToken
     console.log('csrfToken is '+this.state.csrfToken)
   }
 
@@ -56,6 +58,10 @@ class App extends React.Component {
     }
 
 
+  createHello(Hello, props) {
+    return <Hello log={{}} fetchLog={fetchLog()} csrfToken={this.state.csrfToken} />
+  }
+
 
   render() {
     {/*if (!this.state.csrfToken) {
@@ -69,7 +75,9 @@ class App extends React.Component {
     return (
       <div>
         <Menu csrfToken={this.state.csrfToken} {...this.props}/>
-        {this.props.children /*returns the components propagated by router*/}
+        {this.props.children /*returns the components propagated by router*/
+        && React.cloneElement(this.props.children, {fetchLog: this.fetchLog, log: this.state.log, setCSRFToken: this.setCSRFToken})}
+        
         <div>YaddaYadda: {this.loggedIn().toString()}</div>
         {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
       </div>
