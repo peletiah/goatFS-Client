@@ -8,9 +8,17 @@ import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
 
 
-@autobind
-class LoginForm extends React.Component {
+const LoginForm = React.createClass({
 
+  contextTypes: {
+    router: React.PropTypes.object
+  },
+
+  getInitialState() {
+    return {
+      error: false
+    }
+  },
 
   createLogin(event) {
     event.preventDefault()
@@ -20,7 +28,7 @@ class LoginForm extends React.Component {
     }
     this.props.authenticate(login);
     this.refs.loginForm.reset()
-  }
+  },
 
  authenticate(event) {
     event.preventDefault()
@@ -29,7 +37,6 @@ class LoginForm extends React.Component {
         password : this.refs.password.value
     }
 
-    console.log(this.state)
     console.log('putting login')
     fetch('http://localhost:6543/sign_in', {
       method: "PUT",
@@ -38,9 +45,20 @@ class LoginForm extends React.Component {
         "Content-Type": "application/json"
       },
       credentials: 'include'
-    }).then(r => this.props.setCSRFToken())
+    }).then(r => {
+        this.props.setCSRFToken()
+        console.log('Redirecting to nextPathname')
+        const { location } = this.props
+        console.log(this.props)
+        console.log(this.context)
+        if (location.state && location.state.nextPathname) {
+          this.context.router.replace(location.state.nextPathname)
+        } else {
+          this.context.router.replace('/')
+      }
+    })
     .catch(e => console.log("Error "+e))
-  }
+  },
 
 
   render() {
@@ -63,6 +81,6 @@ class LoginForm extends React.Component {
     )
   }
 
-};
+})
 
 export default LoginForm

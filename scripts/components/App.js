@@ -10,7 +10,6 @@ import cookie from 'react-cookie';
 import Menu from './Menu';
 import LoginForm from './LoginForm';
 import Hello from './Hello';
-import RouteHandler from 'react-router'
 
 @autobind
 class App extends React.Component {
@@ -57,21 +56,7 @@ class App extends React.Component {
       .catch(e => console.log("Error"))
     }
 
-
-  createHello(Hello, props) {
-    return <Hello log={{}} fetchLog={fetchLog()} csrfToken={this.state.csrfToken} />
-  }
-
-
   render() {
-    {/*if (!this.state.csrfToken) {
-      return (
-        <div>
-          <LoginForm setCSRFToken={this.setCSRFToken}/>
-        </div>
-      )
-    }*/}
-
     return (
       <div>
         <Menu csrfToken={this.state.csrfToken} {...this.props}/>

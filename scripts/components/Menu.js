@@ -46,11 +46,11 @@ class Menu extends React.Component {
 
     render() {
 
-
+      {console.log('Returning Menu')}
       return (
         <div>
           <nav className="navbar navbar-light bg-faded">
-            <a className="navbar-brand" href="#">GoatFS</a>
+            <a className="navbar-brand" href="/">GoatFS</a>
             <ul className="nav navbar-nav">
             {Object.keys(this.state.menu).map(this.renderMenu)}
             </ul>
