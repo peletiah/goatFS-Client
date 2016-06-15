@@ -35,5 +35,9 @@
     "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0",
     "watchify": "3.4.0"
+  },
+  "dependencies": {
+    "react-anything-sortable": "^1.4.3",
+    "react-sortable": "https://github.com/danielstocks/react-sortable/tarball/v1.0-gridlist"
   }
 }

@@ -61,9 +61,8 @@ class App extends React.Component {
       <div>
         <Menu csrfToken={this.state.csrfToken} {...this.props}/>
         {this.props.children /*returns the components propagated by router*/
-        && React.cloneElement(this.props.children, {fetchLog: this.fetchLog, log: this.state.log, setCSRFToken: this.setCSRFToken})}
+        && React.cloneElement(this.props.children, {fetchLog: this.fetchLog, log: this.state.log, setCSRFToken: this.setCSRFToken, csrfToken: this.state.csrfToken})}
         
-        <div>YaddaYadda: {this.loggedIn().toString()}</div>
         {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
       </div>
     )

@@ -1,10 +1,11 @@
 function redirectToLogin(nextState, replace) {
-  if (localStorage.loggedin !== 'true') {
-    replace({
-      pathname: '/login',
-      state: { nextPathname: nextState.location.pathname }
-    })
-  }
+  //TODO this check only works when loggedin exists and is true
+  //if (localStorage.loggedin !== 'true') {
+  //  replace({
+  //    pathname: '/login',
+  //    state: { nextPathname: nextState.location.pathname }
+  //  })
+  //}
 }
 
 function redirectToHome(nextState, replace) {
@@ -40,6 +41,7 @@ export default {
           cb(null, require('../components/Routing'))
       }
     },
+
     { onEnter: redirectToLogin,
       path: '/administration',
       getComponent: (location, cb) => {
