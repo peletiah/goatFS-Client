@@ -20,6 +20,19 @@ class Routing extends React.Component {
    this._sortableKey = 0;
  }
 
+ componentDidMount() {
+   console.log('Loading Route Sequences from server')
+   fetch('http://localhost:6543/route/1/1', {
+     credentials: 'include',
+     headers: {'X-CSRF-TOKEN': this.props.csrfToken
+     }
+   }).then(r => r.json())
+     .then(data => this.setState({
+       routes: data
+     }))
+     .catch(e => console.log('Error'))
+ };
+
  handleSort(sortedArray) {
    this._sortableKey++;
    this.setState({
@@ -31,7 +44,7 @@ class Routing extends React.Component {
    this._sortableKey++;
    this.setState({
      /*routes: this.state.routes.concat(Math.round(Math.random() * 1000))*/
-     routes: this.state.routes.concat({"sequence": 4, "data": "INFO Finished calling Extension 200", "command": "log"})
+     routes: this.state.routes.concat({"sequence": this._sortableKey, "data": "", "command": ""})
    });
  }
 
@@ -45,18 +58,6 @@ class Routing extends React.Component {
    });
  }
 
- loadSequences() {
-   console.log('Loading Route Sequences from server')
-   fetch('http://localhost:6543/route/1/1', {
-     credentials: 'include',
-     headers: {'X-CSRF-TOKEN': this.props.csrfToken
-     }
-   }).then(r => r.json())
-     .then(data => this.setState({
-       routes: data
-     }, console.log(data)))
-     .catch(e => console.log('Error'))
- }
 
   render() {
     function renderItem(sequence, index) {
@@ -74,7 +75,6 @@ class Routing extends React.Component {
     return (
       <div>
         <button onClick={::this.handleAddElement}>Add 1 element</button>
-        <button onClick={::this.loadSequences}>load shit</button>
         <Sortable className="route" key={this._sortableKey} onSort={::this.handleSort}>
           {this.state.routes.map(renderItem, this)}
         </Sortable>
