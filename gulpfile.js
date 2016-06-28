@@ -68,7 +68,7 @@ function buildScript(file, watch) {
   var props = {
     entries: ['./scripts/' + file],
     debug : true,
-    transform:  [babelify.configure({stage : 0 })]
+    transform:  [babelify.configure({ stage : 0 })]
   };
 
   // watchify() if watch requested, otherwise run browserify() once 

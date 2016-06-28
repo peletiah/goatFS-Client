@@ -1,9 +1,8 @@
 import React from 'react';
 import { sortable } from 'react-anything-sortable';
 
-
 @sortable
-class SortableItem extends React.Component {
+class DemoHOCItem extends React.Component {
   render() {
     return (
       <div {...this.props}>
@@ -11,6 +10,7 @@ class SortableItem extends React.Component {
       </div>
     );
   }
-};
+}
 
-export default SortableItem;
+export default DemoHOCItem;
+

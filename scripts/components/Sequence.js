@@ -7,7 +7,6 @@ class Sequence extends React.Component {
   render() {
     return (
       <div {...this.props}>
-        {console.log(this.props.blablu)}
         <span className="sequence-order">{this.props.sortData.sequence}</span>
         <div className="action">
           <select onChange={this.change} defaultValue={this.props.sortData.command}>

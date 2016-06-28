@@ -17,6 +17,11 @@ function redirectToHome(nextState, replace) {
 export default {
   component: require('../components/App'),
   childRoutes: [
+    { path: '/test',
+      getComponent: (location, cb) => {
+        cb(null, require('../components/Sorting'))
+      }
+    },
     { onEnter: redirectToLogin,
       path: '/',
       getComponent: (location, cb) => {
@@ -52,7 +57,7 @@ export default {
       getComponent: (location, cb) => {
         cb(null, require('../components/LoginForm'))
       }
-    },
+    },    
     { path: '*',
       getComponent: (location, cb) => {
           cb(null, require('../components/NotFound'))
