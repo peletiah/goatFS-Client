@@ -14,7 +14,7 @@ class Sequence extends React.Component {
             <option value={this.props.sortData.command}>{this.props.sortData.command}</option>
             <option>Option 3</option>
           </select>
-          <input defaultValue={this.props.sortData.data} onChange={this.change}></input>
+          <input defaultValue={this.props.sortData.data} onChange={this.change} size="35"></input>
         </div>
       </div>
     );

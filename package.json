@@ -1,6 +1,6 @@
 {
-  "name": "catch-of-the-day",
-  "version": "1.0.0",
+  "name": "goatFS-client",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {

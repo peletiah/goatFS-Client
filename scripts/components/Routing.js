@@ -9,6 +9,7 @@ import autobind from 'autobind-decorator';
 import Log from './Log';
 import Sortable from 'react-anything-sortable';
 import Sequence from './Sequence'
+import shortid from 'shortid'
 
 @autobind
 class Routing extends React.Component {
@@ -17,7 +18,7 @@ class Routing extends React.Component {
     super();
     this.state = {
       sequences: [],
-      _sortableKey: 0
+      lastSequence: 1
     };
   }
   
@@ -37,9 +38,9 @@ class Routing extends React.Component {
         this.setState(sequences)
         console.log(sequences)
         this.setState({
-          _sortableKey: this.highestSequence(this.state.sequences)
+          lastSequence: this.highestSequence(this.state.sequences)
         })
-        console.log(this.state._sortableKey)
+        console.log('lastSequence: '+this.state.lastSequence)
       }
     )
   };
@@ -52,19 +53,25 @@ class Routing extends React.Component {
   }
 
   handleSort(sortedArray) {
-    this.state._sortableKey++;
-    console.log(this.state._sortableKey)
+    var newSequences = []
+    var i=1
+    sortedArray.map(function(item) {item.sequence=i, ++i, newSequences.push(item)})
     this.setState({
-      sequences: sortedArray
+      sequences: newSequences
     });
     console.log(sortedArray)
   }
 
 
   handleAddElement() {
-    this.state._sortableKey++;
+    console.log(this.state.lastSequence)
+    console.log('lastSequence: '+this.state.lastSequence)
     this.setState({
-      sequences: this.state.sequences.concat({"sequence": this.state._sortableKey, "data": "", "command": ""})
+      lastSequence: ++this.state.lastSequence
+    })
+    console.log('lastSequence: '+this.state.lastSequence)
+    this.setState({
+      sequences: this.state.sequences.concat({"sequence": this.state.lastSequence++, "data": "", "command": ""})
     });
   }
   
@@ -86,7 +93,7 @@ class Routing extends React.Component {
   render() {
     function renderItem(sequence, index) {
       return (
-        <Sequence key={index} className="sequence" sortData={sequence}>
+        <Sequence key={sequence.sequence} className="sequence" sortData={sequence}>
           {console.log('Rendering Sequence')}
           {console.log(sequence)}
           {sequence.sequence}
@@ -101,10 +108,23 @@ class Routing extends React.Component {
       <div>
         {console.log('Rendering main')}
         <button onClick={::this.handleAddElement}>Add 1 element</button>
-        <Sortable className="route" key={this.state._sortableKey} onSort={::this.handleSort}>
+        <Sortable className="route" key={shortid.generate()} onSort={::this.handleSort}>
           {this.state.sequences.map(renderItem, this)}
         </Sortable>
         <button onClick={::this.saveRoute}>Save</button>
+        {/*<div className="ui-sortable route">
+          <div className="sequence ui-sortable-item ui-sortable-placeholder visible">
+            <span className="sequence-order">4</span>
+            <div className="action">
+              <select>
+                <option>Test 1</option>
+                <option selected>Test 2</option>
+                <option>Test 3</option>
+              </select>
+              <input value="asdf" size="40"/>
+            </div>
+          </div>
+        </div>*/}
       </div>
     );
   }

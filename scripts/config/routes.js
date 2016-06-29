@@ -19,7 +19,7 @@ export default {
   childRoutes: [
     { path: '/test',
       getComponent: (location, cb) => {
-        cb(null, require('../components/Sorting'))
+        cb(null, require('../components/Test'))
       }
     },
     { onEnter: redirectToLogin,
