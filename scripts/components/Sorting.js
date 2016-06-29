@@ -52,7 +52,7 @@ export default class Vertical extends React.Component {
 
     return (
       <div className="demo-container">
-         <Sortable className="vertical-container" direction="vertical">
+         <Sortable className="vertical-container" direction="vertical" dynamic>
           {this.state.items.map(renderWithSortable, this)}
         </Sortable>
         <br/>

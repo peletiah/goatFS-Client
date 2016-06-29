@@ -101,7 +101,7 @@ class Routing extends React.Component {
       <div>
         {console.log('Rendering main')}
         <button onClick={::this.handleAddElement}>Add 1 element</button>
-        <Sortable className="route" key={this.state._sortableKey} onSort={::this.handleSort} dynamic>
+        <Sortable className="route" key={this.state._sortableKey} onSort={::this.handleSort}>
           {this.state.sequences.map(renderItem, this)}
         </Sortable>
         <button onClick={::this.saveRoute}>Save</button>
