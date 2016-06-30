@@ -4,7 +4,14 @@ import { sortable } from 'react-anything-sortable';
 
 @sortable
 class Sequence extends React.Component {
+  
   render() {
+
+    function inputChange(event) {
+      console.log('asdf')
+      console.log(event.target.value)
+    }
+
     return (
       <div {...this.props}>
         <span className="sequence-order">{this.props.sortData.sequence}</span>
@@ -14,7 +21,7 @@ class Sequence extends React.Component {
             <option value={this.props.sortData.command}>{this.props.sortData.command}</option>
             <option>Option 3</option>
           </select>
-          <input defaultValue={this.props.sortData.data} onChange={this.change} size="35"></input>
+          <input defaultValue={this.props.sortData.data} onChange={this.inputChange} size="35"></input>
         </div>
       </div>
     );

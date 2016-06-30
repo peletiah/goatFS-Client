@@ -87,13 +87,37 @@ class Routing extends React.Component {
   
   saveRoute() {
     console.log(this.state.sequences)
+    fetch('http://localhost:6543/route/1/1', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': this.props.csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(
+        this.state
+      )
+    })
+    .then(
+      response => {
+        return response.json()
+        console.log(response)
+      }
+    )
+  };
+
+
+  inputChange(event) {
+    console.log(event.target.value)
   }
-  
+
+
   
   render() {
     function renderItem(sequence, index) {
       return (
-        <Sequence key={sequence.sequence} className="sequence" sortData={sequence}>
+        <Sequence key={sequence.sequence} className="sequence" sortData={sequence} inputChange={this.inputChange}>
           {console.log('Rendering Sequence')}
           {console.log(sequence)}
           {sequence.sequence}
@@ -107,7 +131,7 @@ class Routing extends React.Component {
     return (
       <div>
         {console.log('Rendering main')}
-        <button onClick={::this.handleAddElement}>Add 1 element</button>
+        <button onClick={::this.handleAddElement}>Add sequence</button>
         <Sortable className="route" key={shortid.generate()} onSort={::this.handleSort}>
           {this.state.sequences.map(renderItem, this)}
         </Sortable>

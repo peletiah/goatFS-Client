@@ -51,11 +51,11 @@ const LoginForm = React.createClass({
         const { location } = this.props
         console.log(this.props)
         console.log(this.context)
-        if (location.state && location.state.nextPathname) {
+/*        if (location.state && location.state.nextPathname) {
           this.context.router.replace(location.state.nextPathname)
         } else {
           this.context.router.replace('/')
-      }
+      }*/
     })
     .catch(e => console.log("Error "+e))
   },
