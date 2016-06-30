@@ -2,14 +2,14 @@
   Routing
 */
 
-import React from 'react';
-import Catalyst from 'react-catalyst';
-import reactMixin from 'react-mixin';
-import autobind from 'autobind-decorator';
-import Log from './Log';
-import Sortable from 'react-anything-sortable';
+import React from 'react'
+import Catalyst from 'react-catalyst'
+import reactMixin from 'react-mixin'
+import autobind from 'autobind-decorator'
+import Sortable from 'react-anything-sortable'
 import Sequence from './Sequence'
 import shortid from 'shortid'
+import Link from 'valuelink'
 
 @autobind
 class Routing extends React.Component {
@@ -55,11 +55,12 @@ class Routing extends React.Component {
   handleSort(sortedArray) {
     var newSequences = []
     var i=1
-    sortedArray.map(function(item) {item.sequence=i, ++i, newSequences.push(item)})
+    console.log(sortedArray)
+    sortedArray.map(function(item) {item.value.sequence=i, ++i, newSequences.push(item.value)})
     this.setState({
       sequences: newSequences
     });
-    console.log(sortedArray)
+    console.log(this.state.sequences)
   }
 
 
@@ -115,15 +116,14 @@ class Routing extends React.Component {
 
   
   render() {
-    function renderItem(sequence, index) {
+    const sequencesLink = Link.state( this, 'sequences' );
+
+    function renderItem(sequenceLink, index) {
       return (
-        <Sequence key={sequence.sequence} className="sequence" sortData={sequence} inputChange={this.inputChange}>
+        <Sequence key={sequenceLink.key} className="sequence" sortData={sequenceLink} onEdit={ () => this.edit( index) }>
           {console.log('Rendering Sequence')}
-          {console.log(sequence)}
-          {sequence.sequence}
-          <span className="delete"
-            onMouseDown={this.handleRemoveElement.bind(this, index)}
-          >&times;</span>
+          {console.log(sequenceLink)}
+          {sequenceLink.sequence}
        </Sequence>
       );
     }
@@ -132,8 +132,8 @@ class Routing extends React.Component {
       <div>
         {console.log('Rendering main')}
         <button onClick={::this.handleAddElement}>Add sequence</button>
-        <Sortable className="route" key={shortid.generate()} onSort={::this.handleSort}>
-          {this.state.sequences.map(renderItem, this)}
+        <Sortable className="route" key={shortid.generate()} onSort={::this.handleSort} dynamic>
+          {sequencesLink.map(renderItem, this)}
         </Sortable>
         <button onClick={::this.saveRoute}>Save</button>
         {/*<div className="ui-sortable route">
