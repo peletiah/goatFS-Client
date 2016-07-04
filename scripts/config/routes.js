@@ -22,6 +22,11 @@ export default {
         cb(null, require('../components/Test'))
       }
     },
+    { path: '/userslist',
+      getComponent: (location, cb) => {
+        cb(null, require('../components/Userslist'))
+      }
+    },
     { onEnter: redirectToLogin,
       path: '/',
       getComponent: (location, cb) => {

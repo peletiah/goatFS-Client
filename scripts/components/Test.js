@@ -2,19 +2,48 @@
   Test
 */
 
-import React from 'react'
-import Catalyst from 'react-catalyst'
-import reactMixin from 'react-mixin'
+import React, {PropTypes} from 'react'
 import autobind from 'autobind-decorator'
-import Link from 'valuelink'
-import { Input, TextArea, Select, Radio, Checkbox } from 'valuelink/tags'
+import SortableListItem from './ListItem'
+import { Sortable } from 'react-sortable'
+import shortid from 'shortid'
 
 @autobind
 class Test extends React.Component {
+  constructor() {
+      super();
+      this.state = {
+        draggingIndex: null,
+          items: [{"sequence": 1, "command": "log", "data": "INFO Calling Extension 200"}, {"sequence": 2, "command": "set", "data": "effective_caller_id_name=John"}, {"sequence": 3, "command": "bridge", "data": "user/200"}]
+      };
+    }
+
+  updateState(obj) {
+    this.setState(obj);
+  }
+
+
   render () {
-    return (
-    <div>asdf</div>
-    );
+
+
+    var listItem = this.state.items.map(function(item, i) {
+      return (
+        <SortableListItem 
+          key={i} 
+          updateState={this.updateState}
+          items={this.state.items}
+          draggingIndex={this.state.draggingIndex}
+          sortId={i}
+          outline="list"
+          item={item}
+          className="sequence"
+          />
+      );
+    }, this);
+
+    return(
+      <div className="route">{listItem}</div>
+    )
   }
 };
 

@@ -1,10 +1,13 @@
 import React, {PropTypes} from 'react';
+import autobind from 'autobind-decorator'
 import { sortable } from 'react-anything-sortable';
 import Link from 'valuelink';
 import { Input, TextArea, Select, Radio, Checkbox } from 'valuelink/tags'
+import shortid from 'shortid'
 
 
 @sortable
+@autobind
 class Sequence extends React.Component {
 
     constructor() {
@@ -19,20 +22,23 @@ class Sequence extends React.Component {
   componentWillMount() {
     this.setState( this.props.sortData.value );
   }
+
+  onSubmit( e ){
+        e.preventDefault();
+        
+        const { sortData } = this.props;
+
+        sortData.set( this.state );
+    }
   
   render() {
-    const linked = Link.all ( this, 'sequence', 'command', 'data' );
-
-    function inputChange(event) {
-      console.log('asdf')
-      console.log(event.target.value)
-    }
+    const linked = Link.all ( this, 'sequence', 'command', 'data' ),
+          dataLink   = this.props.sortData.at( 'data')
 
     const setValue = (x, e) => e.target.value
 
     return (
       <div {...this.props}>
-        {console.log(linked)}
         <span className="sequence-order">{linked.sequence.value}</span>
         <div className="action">
           <select onChange={this.change} valueLink={linked.command}>
@@ -40,7 +46,8 @@ class Sequence extends React.Component {
             <option value={linked.command.value}>{linked.command.value}</option>
             <option>Option 3</option>
           </select>
-          <input value={linked.data.value} onChange={linked.data.action( setValue) } size="35"></input>
+          <input key={ shortid.generate() } value={ linked.data.value } onChange={ dataLink.action( setValue ) } size="35"></input>
+          <input valueLink={ linked.data } size="35"></input>
         </div>
       </div>
     );
