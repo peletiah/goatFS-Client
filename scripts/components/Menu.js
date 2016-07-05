@@ -18,7 +18,7 @@ class Menu extends React.Component {
       menu : []
     }
   }
-
+/*TODO: Don't save menu in state, as it remains unchanged (see https://facebook.github.io/react/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) */
 
   componentDidMount() {
     console.log('Fetching Menu from server')

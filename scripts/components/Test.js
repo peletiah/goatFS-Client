@@ -2,50 +2,50 @@
   Test
 */
 
-import React, {PropTypes} from 'react'
-import autobind from 'autobind-decorator'
-import SortableListItem from './ListItem'
-import { Sortable } from 'react-sortable'
-import shortid from 'shortid'
+import React from 'react';
+import Sortable from 'react-anything-sortable';
+import { sortable } from 'react-anything-sortable';
 
-@autobind
+@sortable
+class DemoHOCItem extends React.Component {
+  render() {
+    return (
+      <div {...this.props}>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+export default DemoHOCItem;
+
 class Test extends React.Component {
   constructor() {
-      super();
-      this.state = {
-        draggingIndex: null,
-          items: [{"sequence": 1, "command": "log", "data": "INFO Calling Extension 200"}, {"sequence": 2, "command": "set", "data": "effective_caller_id_name=John"}, {"sequence": 3, "command": "bridge", "data": "user/200"}]
-      };
-    }
-
-  updateState(obj) {
-    this.setState(obj);
+    super();
+    this.state = {
+      items: ['four','five','six']
+    };
   }
 
-
-  render () {
-
-
-    var listItem = this.state.items.map(function(item, i) {
+  render() {
+    function renderWithSortable(renderItem, index) {
       return (
-        <SortableListItem 
-          key={i} 
-          updateState={this.updateState}
-          items={this.state.items}
-          draggingIndex={this.state.draggingIndex}
-          sortId={i}
-          outline="list"
-          item={item}
-          className="sequence"
-          />
+        <DemoHOCItem className="vertical" sortData="renderItem" key={index} dynamic>
+          {console.log('rendering with sortable')}
+          {renderItem+' sortable'}
+        </DemoHOCItem>
       );
-    }, this);
+    }
 
-    return(
-      <div className="route">{listItem}</div>
-    )
+     return (
+      <div className="demo-container">
+         <Sortable className="vertical-container" direction="vertical">
+          {this.state.items.map(renderWithSortable, this)}
+        </Sortable>
+      </div>
+    );
   }
 };
 
-export default Test
+export default Test;
 

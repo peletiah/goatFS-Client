@@ -18,24 +18,6 @@ var historyApiFallback = require('connect-history-api-fallback')
 
 
 /*
-  Styles Task
-*/
-
-gulp.task('styles',function() {
-  // move over fonts
-
-  gulp.src('css/fonts/**.*')
-    .pipe(gulp.dest('build/css/fonts'))
-
-  // Compiles CSS
-  gulp.src('css/style.styl')
-    .pipe(stylus())
-    .pipe(autoprefixer())
-    .pipe(gulp.dest('./build/css/'))
-    .pipe(reload({stream:true}))
-});
-
-/*
   Images
 */
 gulp.task('images',function(){
@@ -68,16 +50,23 @@ function buildScript(file, watch) {
   var props = {
     entries: ['./scripts/' + file],
     debug : true,
-    transform:  [babelify.configure({ stage : 0 })]
+  };
+
+  var opts = {
+    plugins: ["transform-decorators-legacy"],
+    presets: ["es2015", "react", "stage-2", "stage-0"]
   };
 
   // watchify() if watch requested, otherwise run browserify() once 
-  var bundler = watch ? watchify(browserify(props), {poll: true}) : browserify(props);
+  var bundler = watch ? watchify(browserify(props).transform(babelify, opts), {poll: true}) : browserify(props).transform(babelify, opts);
 
   function rebundle() {
     var stream = bundler.bundle();
     return stream
-      .on('error', handleErrors)
+      .on('error', function(error) {
+        console.log(error.stack, error.message);
+        this.emit('end');
+      })
       .pipe(source(file))
       .pipe(gulp.dest('./build/'))
       // If you also want to uglify it
@@ -103,7 +92,7 @@ gulp.task('scripts', function() {
 });
 
 // run 'scripts' task first, then watch for future changes
-gulp.task('default', ['images','styles','scripts','browser-sync'], function() {
+gulp.task('default', ['images','scripts','browser-sync'], function() {
   gulp.watch('css/**/*', ['styles']); // gulp watch for stylus changes
   return buildScript('main.js', true); // browserify watch for JS changes
 });

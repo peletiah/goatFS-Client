@@ -6,8 +6,8 @@ import { Input, TextArea, Select, Radio, Checkbox } from 'valuelink/tags'
 import shortid from 'shortid'
 
 
-@sortable
 @autobind
+@sortable
 class Sequence extends React.Component {
 
     constructor() {
