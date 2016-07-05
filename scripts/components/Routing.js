@@ -15,8 +15,7 @@ class Routing extends React.Component {
   constructor() {
     super();
     this.state = {
-      sequences: [],
-      lastSequence: 1
+      sequences: []
     };
   }
   
@@ -36,9 +35,7 @@ class Routing extends React.Component {
         this.setState(sequences)
         console.log(sequences)
         this.setState({
-          lastSequence: this.highestSequence(this.state.sequences)
         })
-        console.log('lastSequence: '+this.state.lastSequence)
       }
     )
   };
@@ -62,18 +59,16 @@ class Routing extends React.Component {
 
 
   handleAddElement() {
+    var lastSequence = this.highestSequence(this.state.sequences)
+    console.log('lastSequence='+lastSequence)
     this.setState({
-      lastSequence: ++this.state.lastSequence
-    })
-    this.setState({
-      sequences: this.state.sequences.concat({"sequence": this.state.lastSequence++, "data": "", "command": ""})
+      sequences: this.state.sequences.concat({"sequence": ++lastSequence, "data": "", "command": ""})
     });
   }
   
   handleRemoveElement(index) {
     const newArr = this.state.sequences.slice();
     newArr.splice(index, 1);
-    this.state._sortableKey++;
   
     this.setState({
       sequences: newArr
