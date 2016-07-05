@@ -15,7 +15,8 @@ class Routing extends React.Component {
   constructor() {
     super();
     this.state = {
-      sequences: []
+      sequences: [],
+      _sortableKey: 0
     };
   }
   
@@ -34,8 +35,6 @@ class Routing extends React.Component {
       sequences => {
         this.setState(sequences)
         console.log(sequences)
-        this.setState({
-        })
       }
     )
   };
@@ -48,6 +47,7 @@ class Routing extends React.Component {
   }
 
   handleSort(sortedArray) {
+    this.state._sortableKey++;
     console.log('Entering handleSort')
     var newSequences = []
     var i=1
@@ -59,6 +59,7 @@ class Routing extends React.Component {
 
 
   handleAddElement() {
+    this.state._sortableKey++;
     var lastSequence = this.highestSequence(this.state.sequences)
     console.log('lastSequence='+lastSequence)
     this.setState({
@@ -67,6 +68,7 @@ class Routing extends React.Component {
   }
   
   handleRemoveElement(index) {
+    this.state._sortableKey++;
     const newArr = this.state.sequences.slice();
     newArr.splice(index, 1);
   
@@ -76,6 +78,7 @@ class Routing extends React.Component {
   }
   
   saveRoute() {
+    console.log(this.state.sequences)
     fetch('http://localhost:6543/route/1/1', {
       method: 'POST',
       headers: {
@@ -101,7 +104,7 @@ class Routing extends React.Component {
 
     function renderItem(sequenceLink, index) {
       return (
-        <Sequence key={ ['sequence',index].join('_') } className="sequence" sortData={sequenceLink} onEdit={ () => this.edit( index) }>
+        <Sequence key={ ['sequence',index].join('_') } className="sequence" sortData={sequenceLink} >
           {console.log('Rendering Sequence')}
           {sequenceLink.sequence}
        </Sequence>
@@ -112,7 +115,7 @@ class Routing extends React.Component {
       <div>
         {console.log('Rendering main')}
         <button onClick={::this.handleAddElement}>Add sequence</button>
-        <Sortable className="route" onSort={::this.handleSort} key={ shortid.generate() } dynamic>
+        <Sortable className="route" onSort={::this.handleSort} key={ this.state._sortableKey } dynamic>
           {sequencesLink.map(renderItem, this)}
         </Sortable>
         <button onClick={::this.saveRoute}>Save</button>
