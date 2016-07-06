@@ -6,19 +6,12 @@ import React from 'react'
 import autobind from 'autobind-decorator'
 import Sortable from 'react-anything-sortable'
 import Sequence from './Sequence'
-import shortid from 'shortid'
-import Link from 'valuelink'
+import store from '../store/Store'
+import { connect } from 'react-redux'
 
 @autobind
 class Routing extends React.Component {
 
-  constructor() {
-    super();
-    this.state = {
-      sequences: [],
-      _sortableKey: 0
-    };
-  }
   
   componentDidMount() {
     console.log('Loading Route Sequences from server')
@@ -27,19 +20,26 @@ class Routing extends React.Component {
       headers: {'X-CSRF-TOKEN': this.props.csrfToken
     }})
     .then(
-      response => {
-        return response.json()
-      }
+      response => response.json()
     )
     .then(
-      sequences => {
-        this.setState(sequences)
-        console.log(sequences)
+      responseData => {
+        store.dispatch({
+          type: 'FETCH_ROUTES_SUCCESS',
+          sequences: responseData.sequences
+        })
+        console.log(store.getState())
       }
     )
   };
  
   
+  incrementSortableKey() {
+    store.dispatch({
+      type: 'INCREMENT_SORTABLE_KEY'
+    })
+  };
+
   highestSequence(sequences) {
     var values = [];
     sequences.map(a => values.push(a.sequence))
@@ -47,11 +47,10 @@ class Routing extends React.Component {
   }
 
   handleSort(sortedArray) {
-    this.state._sortableKey++;
-    console.log('Entering handleSort')
+    this.incrementSortableKey()
     var newSequences = []
     var i=1
-    sortedArray.map(function(item) {item.value.sequence=i, ++i, newSequences.push(item.value)})
+    sortedArray.map(function(item) {item.sequence=i, ++i, newSequences.push(item)})
     this.setState({
       sequences: newSequences
     });
@@ -59,7 +58,7 @@ class Routing extends React.Component {
 
 
   handleAddElement() {
-    this.state._sortableKey++;
+    this.incrementSortableKey()
     var lastSequence = this.highestSequence(this.state.sequences)
     console.log('lastSequence='+lastSequence)
     this.setState({
@@ -68,7 +67,7 @@ class Routing extends React.Component {
   }
   
   handleRemoveElement(index) {
-    this.state._sortableKey++;
+    this.incrementSortableKey()
     const newArr = this.state.sequences.slice();
     newArr.splice(index, 1);
   
@@ -100,13 +99,11 @@ class Routing extends React.Component {
 
 
   render() {
-    const sequencesLink = Link.state( this, 'sequences' );
 
-    function renderItem(sequenceLink, index) {
+    function renderItem(sequence, index) {
       return (
-        <Sequence key={ ['sequence',index].join('_') } className="sequence" sortData={sequenceLink} >
-          {console.log('Rendering Sequence')}
-          {sequenceLink.sequence}
+        <Sequence key={ ['sequence',index].join('_') } className="sequence" sortData={sequence} >
+          {sequence.sequence}
        </Sequence>
       );
     }
@@ -114,9 +111,10 @@ class Routing extends React.Component {
     return (
       <div>
         {console.log('Rendering main')}
+        {console.log('props', this.props)}
         <button onClick={::this.handleAddElement}>Add sequence</button>
-        <Sortable className="route" onSort={::this.handleSort} key={ this.state._sortableKey } dynamic>
-          {sequencesLink.map(renderItem, this)}
+        <Sortable className="route" onSort={::this.handleSort} key={ this.props.sortableKey } dynamic>
+          {this.props.sequences.map(renderItem, this)}
         </Sortable>
         <button onClick={::this.saveRoute}>Save</button>
         {/*<div className="ui-sortable route">
@@ -137,4 +135,9 @@ class Routing extends React.Component {
   }
 };
 
-export default Routing;
+const mapStateToProps = function(store) {
+  return store.routeState
+  
+}
+
+export default connect(mapStateToProps)(Routing);

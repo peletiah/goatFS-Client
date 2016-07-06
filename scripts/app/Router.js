@@ -15,59 +15,53 @@ function redirectToHome(nextState, replace) {
 }
 
 export default {
-  component: require('../components/App').default,
+  component: require('../app/App').default,
   childRoutes: [
-    { path: '/test',
-      getComponent: (location, cb) => {
-        cb(null, require('../components/Test').default)
-      }
-    },
-    { path: '/userslist',
-      getComponent: (location, cb) => {
-        cb(null, require('../components/Userslist').default)
-      }
-    },
     { onEnter: redirectToLogin,
       path: '/',
       getComponent: (location, cb) => {
-        cb(null, require('../components/Hello').default)
+        cb(null, require('../routing/Routing').default)
       },
       indexRoute: {
         getComponent: (location, cb) => {
-          cb(null, require('../components/Hello').default)
+          cb(null, require('../routing/Routing').default)
         }
+      }
+    },
+    { onEnter: redirectToLogin,
+      path: '/routing',
+      getComponent: (location, cb) => {
+          cb(null, require('../routing/Routing').default)
+      }
+    },
+    { onEnter: redirectToLogin,
+      path: '/administration',
+      getComponent: (location, cb) => {
+          cb(null, require('../administration/Administration').default)
       }
     },
     { onEnter: redirectToLogin,
       path: '/hello',
       getComponent: (location, cb) => {
-          cb(null, require('../components/Hello').default)
+          cb(null, require('../other/Hello').default)
       }
     },
 
-    { onEnter: redirectToLogin,
-      path: '/routing',
-      getComponent: (location, cb) => {
-          cb(null, require('../components/Routing').default)
-      }
-    },
-
-    { onEnter: redirectToLogin,
-      path: '/administration',
-      getComponent: (location, cb) => {
-          cb(null, require('../components/Administration').default)
-      }
-    },
     { path: '/login',
       getComponent: (location, cb) => {
-        cb(null, require('../components/LoginForm').default)
+        cb(null, require('./LoginForm').default)
       }
     },    
+    { path: '/test',
+      getComponent: (location, cb) => {
+        cb(null, require('../other/Test').default)
+      }
+    }, 
     { path: '*',
       getComponent: (location, cb) => {
-          cb(null, require('../components/NotFound').default)
+          cb(null, require('../app/NotFound').default)
       }
-    }    
+    }  
   ]
 }
 

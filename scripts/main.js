@@ -1,7 +1,11 @@
 import React  from 'react';
 import { render }  from 'react-dom';
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { Provider } from 'react-redux'
 import { Router, browserHistory } from 'react-router';
-import routes from './config/routes'
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import routes from './app/Router'
+import store from './store/Store'
 
 /*
   Main
@@ -20,4 +24,9 @@ import routes from './config/routes'
     }
   }
 
-render(<Router history={browserHistory} routes={routes}/>, document.querySelector('#main'))
+render(
+  <Provider store={store}>
+    <Router history={browserHistory} routes={routes}/>
+  </Provider>,
+    document.querySelector('#main')
+)
