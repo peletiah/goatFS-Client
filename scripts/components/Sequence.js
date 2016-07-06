@@ -23,20 +23,11 @@ class Sequence extends React.Component {
     this.setState( this.props.sortData.value );
   }
 
-  onSubmit( e ){
-        e.preventDefault();
-        
-        const { sortData } = this.props;
-
-        sortData.set( this.state );
-    }
-  
   render() {
     const linked = Link.all ( this, 'sequence', 'command', 'data' ),
           dataLink   = this.props.sortData.at( 'data'),
-          commandLink = this.props.sortData.at( 'command' )
-
-    const setValue = (x, e) => e.target.value
+          commandLink = this.props.sortData.at( 'command' ),
+          dataUpdate = linked.data.onChange ( x => dataLink.set( x ) );
 
     return (
       <div {...this.props}>
@@ -44,10 +35,10 @@ class Sequence extends React.Component {
         <div className="action">
           <Select valueLink={ linked.command.onChange( x => commandLink.set( x ) )}>
             <option>Option 1</option>
-            <option value={linked.command.value}>{linked.command.value}</option>
+            <option value={ linked.command.value }>Option 2</option>
             <option>Option 3</option>
           </Select>
-          <Input valueLink={ linked.data.onChange( x => dataLink.set( x ) ) } size="35"></Input>
+          <Input valueLink={ dataUpdate } size="35"></Input>
         </div>
       </div>
     );
