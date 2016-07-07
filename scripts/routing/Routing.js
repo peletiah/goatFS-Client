@@ -40,14 +40,13 @@ class Routing extends React.Component {
   };
 
   highestSequence(sequences) {
-    var values = [];
+    const values = [];
     sequences.map(a => values.push(a.sequence))
     return Math.max.apply(Math, values)
   }
 
   handleSort(sortedArray) {
     this.incrementSortableKey()
-    var newSequences = []
     store.dispatch({
       type: 'SORT_ROUTES',
       sortedSequences: sortedArray
@@ -65,7 +64,9 @@ class Routing extends React.Component {
   }
 
   handleAlterSequence( sequence, event ) {
-    var newSequence = {...sequence, data: event.target.value}
+    console.log(sequence)
+    console.log(event)
+    const newSequence = {...sequence, data: event.target.value}
     store.dispatch({
       type: 'ALTER_SEQUENCE',
       sequence: newSequence

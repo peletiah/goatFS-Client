@@ -5,31 +5,26 @@ import {reduxForm} from 'redux-form';
 
 
 @autobind
-@sortable
-class Sequence extends React.Component {
-
-
+class SequenceForm extends React.Component {
   render() {
-    const sequence = this.props.sortData
-
-    return (
-      <div { ...this.props }>
-        <span className="sequence-order">{ sequence.sequence }</span>
-        <div className="action">
-          <select defaultValue={ sequence.command }>
-            <option>Option 1</option>
-            <option value={ sequence.command }>{ sequence.command }</option>
-            <option>Option 3</option>
-          </select>
-          <input defaultValue={ sequence.data } onChange={ this.props.handleAlterSequence.bind(this, sequence) } size="35"/>
-          {sequence.sequence} { sequence.command } { sequence.data }
-        </div>
-      </div>
+    const {fields: {sequence, command, data}, handleSubmit} = this.props;
+    console.log(this.props)
+    return(
+      <form className="action" onSubmit={ handleSubmit }>
+        <input type="command" size="8" {...command}/>
+        <input type="data" size="35" {...data}/>
+        <button type="submit">Submit</button>
+      </form>
     );
   }
 };
 
-export default Sequence;
+SequenceForm = reduxForm({
+  form: 'sequenceform',
+  fields: ['sequence','command','data']
+}) (SequenceForm)
+
+export default SequenceForm
 
 /*
 Notes:
@@ -40,4 +35,26 @@ onChange={ this.props.handleAlterSequence.bind(this, sequence) }:
   ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
 
 */
+
+@autobind
+@sortable
+class Sequence extends React.Component {
+
+
+  render() {
+    const {sortData: {sequence, command, data}, handleAlterSequence} = this.props
+
+    return (
+      <div { ...this.props }>
+        <span className="sequence-order">{ sequence }</span>
+        <SequenceForm onSubmit={handleAlterSequence.bind(this)} formKey={ sequence.toString() }/>
+        <span className="action">{sequence} { command } { data } </span>
+      </div>
+    );
+  }
+};
+
+
+export default Sequence;
+
 
