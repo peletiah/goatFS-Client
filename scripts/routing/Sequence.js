@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 import autobind from 'autobind-decorator'
 import { sortable } from 'react-anything-sortable';
-import store from '../store/Store'
+import {reduxForm} from 'redux-form';
 
 
 @autobind
@@ -10,28 +10,19 @@ class Sequence extends React.Component {
 
 
   render() {
-    const action = this.props.sortData
-
-    function updateSequence( event ) {
-      console.log( 'change', action.sequence, event.target.value )
-      var newSequence = {...action, data: event.target.value}
-      console.log('newSequence', newSequence)
-      store.dispatch({
-        type: 'UPDATE_SEQUENCE',
-        sequence: newSequence
-      });
-    }
+    const sequence = this.props.sortData
 
     return (
       <div { ...this.props }>
-        <span className="sequence-order">{ action.sequence }</span>
+        <span className="sequence-order">{ sequence.sequence }</span>
         <div className="action">
-          <select defaultValue={ action.command }>
+          <select defaultValue={ sequence.command }>
             <option>Option 1</option>
-            <option value={ action.command }>{ action.command }</option>
+            <option value={ sequence.command }>{ sequence.command }</option>
             <option>Option 3</option>
           </select>
-          <input defaultValue={ action.data } onChange={ updateSequence }size="35"></input>
+          <input defaultValue={ sequence.data } onChange={ this.props.handleAlterSequence.bind(this, sequence) } size="35"/>
+          {sequence.sequence} { sequence.command } { sequence.data }
         </div>
       </div>
     );
@@ -39,3 +30,14 @@ class Sequence extends React.Component {
 };
 
 export default Sequence;
+
+/*
+Notes:
+onChange={ this.props.handleAlterSequence.bind(this, sequence) }:
+  the ".bind" at the end of the function binds the event-object to "this" and
+  we can use it in handleAlterSequence(sequence, event) - notice that the 
+  argument order gets reversed
+  ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+
+*/
+

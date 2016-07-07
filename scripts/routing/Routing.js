@@ -28,7 +28,6 @@ class Routing extends React.Component {
           type: 'FETCH_ROUTES_SUCCESS',
           sequences: responseData.sequences
         })
-        console.log(store.getState())
       }
     )
   };
@@ -49,10 +48,9 @@ class Routing extends React.Component {
   handleSort(sortedArray) {
     this.incrementSortableKey()
     var newSequences = []
-    var i=1
-    sortedArray.map(function(item) {item.sequence=i, ++i, newSequences.push(item)})
-    this.setState({
-      sequences: newSequences
+    store.dispatch({
+      type: 'SORT_ROUTES',
+      sortedSequences: sortedArray
     });
   }
 
@@ -60,9 +58,17 @@ class Routing extends React.Component {
   handleAddElement() {
     this.incrementSortableKey()
     var lastSequence = this.highestSequence(this.state.sequences)
-    console.log('lastSequence='+lastSequence)
+    console.log('lastSequence:',lastSequence)
     this.setState({
       sequences: this.state.sequences.concat({"sequence": ++lastSequence, "data": "", "command": ""})
+    });
+  }
+
+  handleAlterSequence( sequence, event ) {
+    var newSequence = {...sequence, data: event.target.value}
+    store.dispatch({
+      type: 'ALTER_SEQUENCE',
+      sequence: newSequence
     });
   }
   
@@ -102,21 +108,22 @@ class Routing extends React.Component {
 
     function renderItem(sequence, index) {
       return (
-        <Sequence key={ ['sequence',index].join('_') } className="sequence" sortData={sequence} >
-          {sequence.sequence}
-       </Sequence>
+        <Sequence key={ ['sequence',sequence.sequence].join('_') } className="sequence" sortData={sequence} handleAlterSequence={ this.handleAlterSequence } />
       );
     }
   
     return (
       <div>
         {console.log('Rendering main')}
-        {console.log('props', this.props)}
+
         <button onClick={::this.handleAddElement}>Add sequence</button>
+
         <Sortable className="route" onSort={::this.handleSort} key={ this.props.sortableKey } dynamic>
           {this.props.sequences.map(renderItem, this)}
         </Sortable>
+
         <button onClick={::this.saveRoute}>Save</button>
+
         {/*<div className="ui-sortable route">
           <div className="sequence ui-sortable-item ui-sortable-placeholder visible">
             <span className="sequence-order">4</span>
@@ -130,6 +137,7 @@ class Routing extends React.Component {
             </div>
           </div>
         </div>*/}
+
       </div>
     );
   }

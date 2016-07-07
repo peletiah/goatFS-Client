@@ -1,4 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
+import {reducer as formReducer} from 'redux-form';
+
 
 const initialRouteState = {
   sequences: [],
@@ -16,20 +18,31 @@ var routeReducer = function (state = initialRouteState, action) {
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
       return Object.assign({}, state, { sequences: action.sequences });
-    case 'UPDATE_SEQUENCE':
-      console.log(action.sequence.sequence)
-      console.log(state.sequences)
-      console.log(state.sequences[2].sequence)
+
+    case 'SORT_ROUTES':
+      /* 
+         receives an array of sequences (sorted by <Sortable/>) and 
+         creates state.sequences with sequence.sequence in order
+         of the new sorting
+      */
+      var newSequences = []
+      var i=1
+      action.sortedSequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      return Object.assign({}, state, { sequences: newSequences})
+
+    case 'ALTER_SEQUENCE':
       var updateTargetIndex = state.sequences.findIndex(x => x.sequence == action.sequence.sequence)
-      console.log("updateTargetIndex ",updateTargetIndex)
       var newState = state
       newState.sequences[updateTargetIndex]=action.sequence
-      console.log('newState',state.sequences)
-      return state
+      console.log('altered sequence',newState.sequences[updateTargetIndex])
+      return newState
+
     case 'INCREMENT_SORTABLE_KEY':
-      console.log('state.sortableKey',state.sortableKey)
-      var key = state.sortableKey
-      return Object.assign({}, state, { sortableKey: ++key });
+      var key = state.sortableKey;
+      key++;
+      return Object.assign({}, state, { sortableKey: key });
+
+
     default:
       return state;
   }
@@ -37,7 +50,6 @@ var routeReducer = function (state = initialRouteState, action) {
 
 
 var menuReducer = function (state = initialMenuState, action) {
-  console.log('Calling menuReducer with', action.type)
 
   switch (action.type) {
     case 'FETCH_MENU_SUCCESS':
@@ -49,7 +61,8 @@ var menuReducer = function (state = initialMenuState, action) {
 
 const reducers = combineReducers({
   routeState: routeReducer,
-  menuState: menuReducer
+  menuState: menuReducer,
+  form: formReducer
 });
 
 const store = createStore(reducers);
