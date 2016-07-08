@@ -22,7 +22,13 @@ class SequenceForm extends React.Component {
 SequenceForm = reduxForm({
   form: 'sequenceform',
   fields: ['sequence','command','data']
-}) (SequenceForm)
+},
+state => ({
+//  initialValues: state.routeState.sequences
+  initialValues: {sequence: 'sadf', command: 'asdf', data:'asdfasdf'}
+}),
+{ load: data => ({ type: LOAD, data }) }
+) (SequenceForm)
 
 export default SequenceForm
 
@@ -47,7 +53,7 @@ class Sequence extends React.Component {
     return (
       <div { ...this.props }>
         <span className="sequence-order">{ sequence }</span>
-        <SequenceForm onSubmit={handleAlterSequence.bind(this)} formKey={ sequence.toString() }/>
+        <SequenceForm onSubmit={ handleAlterSequence.bind(this) } formKey={ sequence.toString() }/>
         <span className="action">{sequence} { command } { data } </span>
       </div>
     );

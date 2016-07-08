@@ -13,7 +13,7 @@ const initialMenuState = {
 
 
 var routeReducer = function (state = initialRouteState, action) {
-  console.log('Calling routeReducer with', action.type)
+  console.log('Calling routeReducer with', action.type, action)
 
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
@@ -65,6 +65,16 @@ const reducers = combineReducers({
   form: formReducer
 });
 
-const store = createStore(reducers);
+function configureStore(initialState) {
+  const store = createStore(
+    reducers,
+    initialState,
+    window.devToolsExtension && window.devToolsExtension()
+  );
+  return store;
+}
+
+const store = configureStore()
 
 export default store;
+
