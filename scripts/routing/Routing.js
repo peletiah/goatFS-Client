@@ -4,8 +4,7 @@
 
 import React from 'react'
 import autobind from 'autobind-decorator'
-import Sortable from 'react-anything-sortable'
-import Sequence from './Sequence'
+import Route from './Route'
 import store from '../store/Store'
 import { connect } from 'react-redux'
 
@@ -47,6 +46,7 @@ class Routing extends React.Component {
 
   handleSort(sortedArray) {
     this.incrementSortableKey()
+    console.log('sortedArray',sortedArray)
     store.dispatch({
       type: 'SORT_ROUTES',
       sortedSequences: sortedArray
@@ -57,7 +57,6 @@ class Routing extends React.Component {
   handleAddElement() {
     this.incrementSortableKey()
     var lastSequence = this.highestSequence(this.state.sequences)
-    console.log('lastSequence:',lastSequence)
     this.setState({
       sequences: this.state.sequences.concat({"sequence": ++lastSequence, "data": "", "command": ""})
     });
@@ -84,7 +83,6 @@ class Routing extends React.Component {
   }
   
   saveRoute() {
-    console.log(this.state.sequences)
     fetch('http://localhost:6543/route/1/1', {
       method: 'POST',
       headers: {
@@ -106,40 +104,14 @@ class Routing extends React.Component {
 
 
   render() {
-
-    function renderItem(sequence, index) {
-      return (
-        <Sequence key={ ['sequence',sequence.sequence].join('_') } className="sequence" sortData={sequence} handleAlterSequence={ this.handleAlterSequence } />
-      );
-    }
-  
     return (
-      <div>
-        {console.log('Rendering main')}
-
-        <button onClick={::this.handleAddElement}>Add sequence</button>
-
-        <Sortable className="route" onSort={::this.handleSort} key={ this.props.sortableKey } dynamic>
-          {this.props.sequences.map(renderItem, this)}
-        </Sortable>
-
-        <button onClick={::this.saveRoute}>Save</button>
-
-        {/*<div className="ui-sortable route">
-          <div className="sequence ui-sortable-item ui-sortable-placeholder visible">
-            <span className="sequence-order">4</span>
-            <div className="action">
-              <select>
-                <option>Test 1</option>
-                <option selected>Test 2</option>
-                <option>Test 3</option>
-              </select>
-              <input value="asdf" size="40"/>
-            </div>
-          </div>
-        </div>*/}
-
-      </div>
+      <Route 
+        sequences={ this.props.sequences } 
+        handleSubmit={ this.handleAlterSequence } 
+        handleSort={ this.handleSort } 
+        saveRoute={ this.saveRoute } 
+        sortableKey={ this.props.sortableKey }
+      />
     );
   }
 };
@@ -150,3 +122,4 @@ const mapStateToProps = function(store) {
 }
 
 export default connect(mapStateToProps)(Routing);
+

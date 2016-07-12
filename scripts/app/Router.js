@@ -56,8 +56,18 @@ export default {
       getComponent: (location, cb) => {
         cb(null, require('../other/Test').default)
       }
-    }, 
-    { path: '*',
+    },    
+    { path: '/form',
+      getComponent: (location, cb) => {
+        cb(null, require('../other/FieldArray').default)
+      }
+    },
+    { path: '/simpleform',
+      getComponent: (location, cb) => {
+        cb(null, require('../other/SimpleForm').default)
+      }
+    },
+   { path: '*',
       getComponent: (location, cb) => {
           cb(null, require('../app/NotFound').default)
       }
