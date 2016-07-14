@@ -1,3 +1,5 @@
+import update from 'react/lib/update';
+
 const initialRouteState = { 
   sequences: [], 
   sortableKey: 0 
@@ -21,6 +23,25 @@ var routeReducer = function (state = initialRouteState, action) {
       action.sortedSequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
       console.log(newSequences)
       return Object.assign({}, state, { sequences: newSequences})
+
+    case 'MOVE_SEQUENCE':
+      console.log('state',state, action.hoverIndex, action.dragIndex)
+      console.log('MOVE_SEQUENCE', state.sequences)
+      console.log(state.sequences[action.dragIndex])
+      const sequences = state.sequences
+      const { dragIndex, hoverIndex } = action
+      const dragSequence = sequences[dragIndex]
+      console.log('dragSequence',dragSequence)
+      return update(state, {
+      sequences: {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragSequence]
+        ]
+      }
+      });
+
+      
 
     case 'ALTER_SEQUENCE':
       var updateTargetIndex = state.sequences.findIndex(x => x.sequence == action.sequence.sequence)

@@ -5,21 +5,6 @@ import { Field, FieldArray, reduxForm } from 'redux-form';
 import { connect } from 'react-redux'
 import store from '../store/Store'
 
-class SequenceForm extends React.Component {
-  render() {
-    const {fields: {sequence, command, data}} = this.props;
-    console.log(this.props)
-    return(
-      <div className="action">
-        <input type="command" size="8" {...command}/>
-        <input type="data" size="35" {...data}/>
-      </div>
-    );
-  }
-};
-
-export default SequenceForm
-
 /*
 Notes:
 onChange={ this.props.handleAlterSequence.bind(this, sequence) }:
@@ -51,7 +36,12 @@ class Sequence extends React.Component {
     const { sequenceField } = this.props
 
     return (
-      <div { ...this.props }>
+      <div 
+        className={ this.props.className }
+        style={ this.props.style }
+        onMouseDown={ this.props.onMouseDown }
+        onTouchStart={ this.props.onTouchStart }
+      >
         <Field
           name={`${sequenceField}.sequence`}
           type="text"
@@ -104,7 +94,7 @@ class renderSequences extends React.Component {
 class Route extends React.Component {
 
   componentDidMount() {
-    this.props.initialize(this.props.sequence)
+    this.props.initialize()
   }
 
   render() {
@@ -118,7 +108,7 @@ class Route extends React.Component {
 
 
     return (
-      <form onSubmit={ handleSubmit }>
+      <div>
         <FieldArray name="sequences" 
           component   = { renderSequences }
           handleSort  = { handleSort }
@@ -141,7 +131,7 @@ class Route extends React.Component {
             </div>
           </div>
         </div>*/}
-      </form>
+      </div>
 
     );
   }

@@ -2,14 +2,37 @@
   Routing
 */
 
-import React from 'react'
+import React, { Component } from 'react'
+import update from 'react/lib/update';
 import autobind from 'autobind-decorator'
-import Route from './Route'
-import store from '../store/Store'
 import { connect } from 'react-redux'
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { Field, FieldArray, reduxForm } from 'redux-form';
+import Sequence from './Sequence'
+import store from '../store/Store'
+
+const renderSequences = ({ fields, moveSequence }) => (
+  <div className="route">
+    {fields.map((sequenceField, index) =>
+      <Sequence key={ `${sequenceField}.sequence` } 
+                index={ index }
+                moveSequence ={ moveSequence }
+                className="sequence" 
+                sequenceField={ sequenceField } />
+    )}
+  </div>
+)
 
 @autobind
-class Routing extends React.Component {
+@DragDropContext(HTML5Backend)
+class Routing extends Component {
+  
+  constructor(props) {
+    super(props);
+    this.moveSequence = this.moveSequence.bind(this);
+  }
+
 
   
   componentDidMount() {
@@ -28,97 +51,55 @@ class Routing extends React.Component {
           sequences: responseData.sequences
         })
       }
-    )
+    ),
+    this.props.initialize()
   };
+
+
+  moveSequence(dragIndex, hoverIndex) {
+    const { sequences } = this.props;
+    const dragSequence = sequences[dragIndex];
+    console.log('moveSequence',dragIndex,hoverIndex,dragSequence)
+   
+    store.dispatch({
+      type:'MOVE_SEQUENCE',
+      hoverIndex: hoverIndex,
+      dragIndex: dragIndex,
+      sequences: sequences
+    })
+  }
+  
  
-  
-  incrementSortableKey() {
-    store.dispatch({
-      type: 'INCREMENT_SORTABLE_KEY'
-    })
-  };
-
-  highestSequence(sequences) {
-    const values = [];
-    sequences.map(a => values.push(a.sequence))
-    return Math.max.apply(Math, values)
-  }
-
-  handleSort(sortedArray) {
-    this.incrementSortableKey()
-    console.log('sortedArray',sortedArray)
-    store.dispatch({
-      type: 'SORT_ROUTES',
-      sortedSequences: sortedArray
-    });
-  }
-
-
-  handleAddElement() {
-    this.incrementSortableKey()
-    var lastSequence = this.highestSequence(this.state.sequences)
-    this.setState({
-      sequences: this.state.sequences.concat({"sequence": ++lastSequence, "data": "", "command": ""})
-    });
-  }
-
-  handleAlterSequence( sequence, event ) {
-    console.log(sequence)
-    console.log(event)
-    const newSequence = {...sequence, data: event.target.value}
-    store.dispatch({
-      type: 'ALTER_SEQUENCE',
-      sequence: newSequence
-    });
-  }
-  
-  handleRemoveElement(index) {
-    this.incrementSortableKey()
-    const newArr = this.state.sequences.slice();
-    newArr.splice(index, 1);
-  
-    this.setState({
-      sequences: newArr
-    });
-  }
-  
-  saveRoute() {
-    fetch('http://localhost:6543/route/1/1', {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': this.props.csrfToken,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(
-        this.state
-      )
-    })
-    .then(
-      response => {
-        return response.json()
-      }
-    )
-  };
-
-
   render() {
+    const { sequences } = this.props
+
     return (
-      <Route 
-        sequences={ this.props.sequences } 
-        handleSubmit={ this.handleAlterSequence } 
-        handleSort={ this.handleSort } 
-        saveRoute={ this.saveRoute } 
-        sortableKey={ this.props.sortableKey }
-      />
+      <div>
+        <FieldArray name="sequences"
+            component   =  { renderSequences }
+            moveSequence = { this.moveSequence }
+        />
+        <button type="button" onClick={ this.saveRoute }>Save</button>
+    </div>
     );
   }
 };
 
+Routing = reduxForm({
+    form: 'sequenceform',
+  }
+)(Routing)
+
+Routing = connect(
+  state => ({
+    initialValues: {sequences:state.routeState.sequences}
+  })
+)(Routing)
+
+
 const mapStateToProps = function(store) {
+  // maps store.routeState to this.props
   return store.routeState
-  
 }
 
 export default connect(mapStateToProps)(Routing);

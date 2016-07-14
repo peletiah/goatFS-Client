@@ -54,7 +54,7 @@ export default {
     },    
     { path: '/test',
       getComponent: (location, cb) => {
-        cb(null, require('../other/Test').default)
+        cb(null, require('../routing/Routing_old').default)
       }
     },    
     { path: '/form',
@@ -67,7 +67,17 @@ export default {
         cb(null, require('../other/SimpleForm').default)
       }
     },
-   { path: '*',
+    { path: '/chess',
+      getComponent: (location, cb) => {
+        cb(null, require('../chess/Chess').default)
+      }
+    },
+    { path: '/dnd',
+      getComponent: (location, cb) => {
+        cb(null, require('../dnd_sortable/Sortable').default)
+      }
+    },
+    { path: '*',
       getComponent: (location, cb) => {
           cb(null, require('../app/NotFound').default)
       }
