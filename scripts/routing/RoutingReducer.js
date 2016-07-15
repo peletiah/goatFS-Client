@@ -6,6 +6,7 @@ const initialRouteState = {
 }
 
 var routeReducer = function (state = initialRouteState, action) {
+  console.log('routeReducer with',action.type)
 
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
@@ -23,6 +24,13 @@ var routeReducer = function (state = initialRouteState, action) {
       action.sortedSequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
       console.log(newSequences)
       return Object.assign({}, state, { sequences: newSequences})
+
+    case 'ALTER_SEQUENCE':
+      /* Receives array of sequences from redux-form-validation
+         and writes it to state.sequences
+      */
+      return Object.assign({}, state, {sequences: action.modifiedSequences})
+
 
     case 'MOVE_SEQUENCE':
       console.log('state',state, action.hoverIndex, action.dragIndex)

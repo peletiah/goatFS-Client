@@ -51,12 +51,7 @@ export default {
       getComponent: (location, cb) => {
         cb(null, require('./LoginForm').default)
       }
-    },    
-    { path: '/test',
-      getComponent: (location, cb) => {
-        cb(null, require('../routing/Routing_old').default)
-      }
-    },    
+    },
     { path: '/form',
       getComponent: (location, cb) => {
         cb(null, require('../other/FieldArray').default)
