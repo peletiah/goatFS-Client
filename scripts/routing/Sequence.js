@@ -60,12 +60,12 @@ const sequenceTarget = {
     // When dragging upwards, only move when the cursor is above 50%
 
     // Dragging downwards
-    if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+    if (dragIndex < hoverIndex && clientOffset.y < hoverBoundingRect.top) {
       return;
     }
 
     // Dragging upwards
-    if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+    if (dragIndex > hoverIndex && clientOffset.y > hoverBoundingRect.bottom) {
       return;
     }
 

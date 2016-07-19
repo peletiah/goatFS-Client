@@ -6,7 +6,6 @@ const initialRouteState = {
 }
 
 var routeReducer = function (state = initialRouteState, action) {
-  console.log('routeReducer with',action.type)
 
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
@@ -33,13 +32,9 @@ var routeReducer = function (state = initialRouteState, action) {
 
 
     case 'MOVE_SEQUENCE':
-      console.log('state',state, action.hoverIndex, action.dragIndex)
-      console.log('MOVE_SEQUENCE', state.sequences)
-      console.log(state.sequences[action.dragIndex])
       const sequences = state.sequences
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
-      console.log('dragSequence',dragSequence)
       return update(state, {
       sequences: {
         $splice: [

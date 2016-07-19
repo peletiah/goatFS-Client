@@ -69,7 +69,6 @@ class Routing extends Component {
   moveSequence(dragIndex, hoverIndex) {
     const { sequences } = this.props;
     const dragSequence = sequences[dragIndex];
-    console.log('moveSequence',dragIndex,hoverIndex,dragSequence)
    
     store.dispatch({
       type:'MOVE_SEQUENCE',
