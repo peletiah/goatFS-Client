@@ -80,14 +80,23 @@ const sequenceTarget = {
   }
 }
 
+function collectDragSource(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
+    isDragging: monitor.isDragging()
+  }
+}
 
-@DropTarget(ItemTypes.SEQUENCE, sequenceTarget, connect => ({
-  connectDropTarget: connect.dropTarget()
-}))
-@DragSource(ItemTypes.SEQUENCE, sequenceSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging()
-}))
+function collectDropTarget(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isDraggingTarget: monitor.isOver()
+  }
+}
+
+@DropTarget(ItemTypes.SEQUENCE, sequenceTarget,collectDropTarget)
+@DragSource(ItemTypes.SEQUENCE, sequenceSource, collectDragSource)
 class Sequence extends Component {
   static propTypes = {
     connectDragSource: PropTypes.func.isRequired,
@@ -101,12 +110,18 @@ class Sequence extends Component {
   render() {
     const { sequenceField, 
             isDragging,
+            isDraggingTarget,
             connectDragSource,
             connectDropTarget            
           } = this.props
 
     return connectDragSource(connectDropTarget(
-      <div className="sequence">
+      <div className="sequence" 
+           style={{ 
+             opacity: isDraggingTarget ? 0.4 : 1,
+             border: isDraggingTarget ? '1px #444 dashed' : 'None',
+             cursor: 'move'
+           }}>
         <Field
           name={`${sequenceField}.sequence`}
           type="text"
