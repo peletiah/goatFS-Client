@@ -66,6 +66,12 @@ class Routing extends Component {
   };
 
 
+  handleAddSequence() {
+    store.dispatch({
+      type: 'ADD_SEQUENCE'
+    })      
+  }
+
   moveSequence(dragIndex, hoverIndex) {
     const { sequences } = this.props;
     const dragSequence = sequences[dragIndex];
@@ -74,7 +80,6 @@ class Routing extends Component {
       type:'MOVE_SEQUENCE',
       hoverIndex: hoverIndex,
       dragIndex: dragIndex,
-      sequences: sequences
     })
   }
   
@@ -84,6 +89,7 @@ class Routing extends Component {
 
     return (
       <div>
+        <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
         <FieldArray name="sequences"
             component   =  { renderSequences }
             moveSequence = { this.moveSequence }

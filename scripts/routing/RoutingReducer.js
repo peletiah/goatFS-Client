@@ -1,8 +1,7 @@
 import update from 'react/lib/update';
 
 const initialRouteState = { 
-  sequences: [], 
-  sortableKey: 0 
+  sequences: [] 
 }
 
 var routeReducer = function (state = initialRouteState, action) {
@@ -11,31 +10,24 @@ var routeReducer = function (state = initialRouteState, action) {
     case 'FETCH_ROUTES_SUCCESS':
       return Object.assign({}, state, { sequences: action.sequences });
 
-    case 'SORT_ROUTES':
-      /* 
-         receives an array of sequences (sorted by <Sortable/>) and 
-         creates state.sequences with sequence.sequence in order
-         of the new sorting
-      */
-      console.log('SORT_ROUTES',action)
-      var newSequences = []
-      var i=1
-      action.sortedSequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
-      console.log(newSequences)
-      return Object.assign({}, state, { sequences: newSequences})
-
-    case 'ALTER_SEQUENCE':
-      /* Receives array of sequences from redux-form-validation
-         and writes it to state.sequences
-      */
-      return Object.assign({}, state, {sequences: action.modifiedSequences})
-
+    case 'ADD_SEQUENCE':
+      var values = [];
+      state.sequences.map(a => values.push(a.sequence))
+      let highest = Math.max.apply(Math, values)
+      const newSequence = { sequence: highest+=1, data:"", command:"" }
+      return update(state, {
+        sequences: {
+          $push: [newSequence]
+        }
+        });
 
     case 'MOVE_SEQUENCE':
       const sequences = state.sequences
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
-      return update(state, {
+      // a sequence has been moved to a different position
+      // update the route state
+      const sortedRouteState = update(state, {
       sequences: {
         $splice: [
           [dragIndex, 1],
@@ -43,21 +35,18 @@ var routeReducer = function (state = initialRouteState, action) {
         ]
       }
       });
-
-      
+      let i=1
+      const newSequences = []
+      // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
+      sortedRouteState.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      return {sequences: newSequences}
 
     case 'ALTER_SEQUENCE':
-      var updateTargetIndex = state.sequences.findIndex(x => x.sequence == action.sequence.sequence)
-      var newState = state
-      newState.sequences[updateTargetIndex]=action.sequence
-      console.log('altered sequence',newState.sequences[updateTargetIndex])
-      return newState
-
-    case 'INCREMENT_SORTABLE_KEY':
-      var key = state.sortableKey;
-      key++;
-      return Object.assign({}, state, { sortableKey: key });
-
+      console.log(action)
+      /* Receives array of sequences from redux-form-validation
+      and writes it to state.sequences
+      */
+      return Object.assign({}, state, {sequences: action.modifiedSequences})
 
     default:
       return state;

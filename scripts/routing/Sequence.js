@@ -12,8 +12,8 @@ import store from '../store/Store'
 
 const renderField = field => (
   <span>
-      <input {...field.input}/>
-      {field.touched && field.error && <span>{field.error}</span>}
+      <input { ...field.input }/>
+      {field.touched && field.error && <span>{ field.error }</span>}
   </span>
 )
 
@@ -130,11 +130,13 @@ class Sequence extends Component {
           <Field
             name={`${sequenceField}.command`}
             type="text"
+            size="8"
             component={renderField}
             placeholder="command"/>
           <Field
             name={`${sequenceField}.data`}
             type="text"
+            size="35"
             component={renderField}
             placeholder="data"/>
         </div>
