@@ -29,9 +29,10 @@
     "gulp-util": "3.0.7",
     "history": "^3.0.0",
     "install": "0.8.1",
+    "lodash": "^4.13.1",
     "notify-send": "^0.1.2",
     "re-base": "1.5.1",
-    "react": "^15.0.0",
+    "react": "^15.2.1",
     "react-addons-css-transition-group": "^15.0.0",
     "react-anything-sortable": "1.5.0",
     "react-autocomplete": "^1.0.1",
@@ -40,7 +41,11 @@
     "react-dom": "^15.0.0",
     "react-mixin": "^3.0.3",
     "react-modal": "^1.4.0",
+    "react-redux": "^4.4.5",
     "react-router": "^2.5.2",
+    "react-router-redux": "^4.0.5",
+    "redux": "^3.5.2",
+    "remote-redux-devtools": "^0.3.3",
     "shortid": "^2.2.6",
     "valuelink": "^1.3.10",
     "vinyl-buffer": "1.0.0",
@@ -49,6 +54,9 @@
     "whatwg-fetch": "^1.0.0"
   },
   "dependencies": {
-    "react-sortable": "^1.0.1"
+    "react-dnd": "^2.1.4",
+    "react-dnd-html5-backend": "^2.1.2",
+    "react-sortable": "^1.0.1",
+    "redux-form": "^6.0.0-rc.3"
   }
 }

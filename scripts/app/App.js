@@ -9,7 +9,6 @@ import autobind from 'autobind-decorator';
 import cookie from 'react-cookie';
 import Menu from './Menu';
 import LoginForm from './LoginForm';
-import Hello from './Hello';
 
 @autobind
 class App extends React.Component {
@@ -62,8 +61,6 @@ class App extends React.Component {
         <Menu csrfToken={this.state.csrfToken} {...this.props}/>
         {this.props.children /*returns the components propagated by router*/
         && React.cloneElement(this.props.children, {fetchLog: this.fetchLog, log: this.state.log, setCSRFToken: this.setCSRFToken, csrfToken: this.state.csrfToken})}
-        
-        {/*<Hello fetchLog={this.fetchLog} log={this.state.log}/>*/}
       </div>
     )
   }

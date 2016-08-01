@@ -63,10 +63,11 @@ function buildScript(file, watch) {
   function rebundle() {
     var stream = bundler.bundle();
     return stream
-      .on('error', function(error) {
+      .on('error', handleErrors)
+      /*function(error) {
         console.log(error.stack, error.message);
         this.emit('end');
-      })
+      })*/
       .pipe(source(file))
       .pipe(gulp.dest('./build/'))
       // If you also want to uglify it

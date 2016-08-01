@@ -21,7 +21,6 @@ class Menu extends React.Component {
 /*TODO: Don't save menu in state, as it remains unchanged (see https://facebook.github.io/react/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) */
 
   componentDidMount() {
-    console.log('Fetching Menu from server')
     fetch('http://localhost:6543/menu', {
       credentials: 'include',
       headers: {
@@ -35,7 +34,6 @@ class Menu extends React.Component {
     }
 
   renderMenu(key) {
-    console.debug('Rendering Menu Items')
     return(
       <li className="nav-item" key={this.state.menu[key].id}>
         <Link className="nav-link" to={this.state.menu[key].location}>{this.state.menu[key].name}</Link>
@@ -45,8 +43,6 @@ class Menu extends React.Component {
 
 
     render() {
-
-      {console.log('Returning Menu')}
       return (
         <div>
           <nav className="navbar navbar-light bg-faded">

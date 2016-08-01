@@ -1,0 +1,71 @@
+import update from 'react/lib/update';
+
+const initialRouteState = { 
+  sequences: [] 
+}
+
+const routeReducer = function (state = initialRouteState, action) {
+
+  const sequences = state.sequences
+
+  switch (action.type) {
+    case 'FETCH_ROUTES_SUCCESS':
+      return Object.assign({}, state, { sequences: action.sequences });
+
+    case 'RENUMBER_SEQUENCES':
+      let i=1
+      const newSequences = []
+      // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
+      state.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      return {sequences: newSequences}
+
+
+    case 'ADD_SEQUENCE':
+      var values = [];
+      state.sequences.map(a => values.push(a.sequence))
+      let highest = Math.max.apply(Math, values)
+      const newSequence = { sequence: highest+=1, data:"", command:"" }
+      return update(state, {
+        sequences: {
+          $push: [newSequence]
+        }
+        });
+
+    case 'MOVE_SEQUENCE':
+      const { dragIndex, hoverIndex } = action
+      const dragSequence = sequences[dragIndex]
+      // a sequence has been moved to a different position
+      // update the route state
+      return update(state, {
+      sequences: {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragSequence]
+        ]
+      }
+      });
+
+
+    case 'REMOVE_SEQUENCE':
+      const index = action.index
+      return update(state, {
+        sequences: {
+          $splice:[
+            [index, 1]
+          ]
+        }
+      })
+
+    case 'ALTER_SEQUENCE':
+      /* Receives array of sequences from redux-form-validation
+      and writes it to state.sequences
+      */
+      return Object.assign({}, state, {sequences: action.modifiedSequences})
+
+    default:
+      return state;
+  }
+}
+
+
+export default routeReducer;
