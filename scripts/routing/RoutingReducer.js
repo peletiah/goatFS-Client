@@ -4,11 +4,21 @@ const initialRouteState = {
   sequences: [] 
 }
 
-var routeReducer = function (state = initialRouteState, action) {
+const routeReducer = function (state = initialRouteState, action) {
+
+  const sequences = state.sequences
 
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
       return Object.assign({}, state, { sequences: action.sequences });
+
+    case 'RENUMBER_SEQUENCES':
+      let i=1
+      const newSequences = []
+      // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
+      state.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      return {sequences: newSequences}
+
 
     case 'ADD_SEQUENCE':
       var values = [];
@@ -22,12 +32,11 @@ var routeReducer = function (state = initialRouteState, action) {
         });
 
     case 'MOVE_SEQUENCE':
-      const sequences = state.sequences
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
       // a sequence has been moved to a different position
       // update the route state
-      const sortedRouteState = update(state, {
+      return update(state, {
       sequences: {
         $splice: [
           [dragIndex, 1],
@@ -35,14 +44,19 @@ var routeReducer = function (state = initialRouteState, action) {
         ]
       }
       });
-      let i=1
-      const newSequences = []
-      // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
-      sortedRouteState.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
-      return {sequences: newSequences}
+
+
+    case 'REMOVE_SEQUENCE':
+      const index = action.index
+      return update(state, {
+        sequences: {
+          $splice:[
+            [index, 1]
+          ]
+        }
+      })
 
     case 'ALTER_SEQUENCE':
-      console.log(action)
       /* Receives array of sequences from redux-form-validation
       and writes it to state.sequences
       */

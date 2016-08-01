@@ -33,6 +33,15 @@ const sequenceSource = {
   }
 }
 
+
+const Close = ({index, removeSequence }) => (
+        <button type="button" className="close" aria-label="Close" onClick={ removeSequence.bind(null, index) } >
+          <span aria-hidden="true">&times;</span>
+        </button>
+)
+
+
+
 const sequenceTarget = {
   hover(props, monitor, component) {
     const dragIndex = monitor.getItem().index;
@@ -104,15 +113,18 @@ class Sequence extends Component {
     index: PropTypes.number.isRequired,
     isDragging: PropTypes.bool.isRequired,
     sequenceField: PropTypes.any.isRequired,
-    moveSequence: PropTypes.func.isRequired
+    moveSequence: PropTypes.func.isRequired,
+    removeSequence: PropTypes.func.isRequired
   };
 
   render() {
-    const { sequenceField, 
+    const { sequenceField,
+            removeSequence,
+            index,
             isDragging,
             isDraggingTarget,
             connectDragSource,
-            connectDropTarget            
+            connectDropTarget
           } = this.props
 
     return connectDragSource(connectDropTarget(
@@ -139,7 +151,11 @@ class Sequence extends Component {
             size="35"
             component={renderField}
             placeholder="data"/>
-        </div>
+          </div>
+        <Close
+          index = { index }
+          removeSequence = { removeSequence }
+        />
       </div>
     ));
   }

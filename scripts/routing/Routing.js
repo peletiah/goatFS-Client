@@ -12,12 +12,13 @@ import { Field, FieldArray, reduxForm } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
 
-const renderSequences = ({ fields, moveSequence }) => (
+const renderSequences = ({ fields, moveSequence, removeSequence }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
                 moveSequence ={ moveSequence }
+                removeSequence = { removeSequence }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -81,8 +82,23 @@ class Routing extends Component {
       hoverIndex: hoverIndex,
       dragIndex: dragIndex,
     })
+
+    store.dispatch({
+      type:'RENUMBER_SEQUENCES'
+    })
   }
-  
+ 
+
+  removeSequence(index) {
+    store.dispatch({
+      type:'REMOVE_SEQUENCE',
+      index: index
+    })
+    store.dispatch({
+      type:'RENUMBER_SEQUENCES'
+    })
+
+  }
  
   render() {
     const { sequences } = this.props
@@ -93,6 +109,7 @@ class Routing extends Component {
         <FieldArray name="sequences"
             component   =  { renderSequences }
             moveSequence = { this.moveSequence }
+            removeSequence = { this.removeSequence }
         />
         <button type="button" onClick={ this.saveRoute }>Save</button>
     </div>
