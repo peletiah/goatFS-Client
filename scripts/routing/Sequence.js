@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ItemTypes from './ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
-import store from '../store/Store'
 
 
 
@@ -34,8 +33,8 @@ const sequenceSource = {
 }
 
 
-const Close = ({index, removeSequence }) => (
-        <button type="button" className="close" aria-label="Close" onClick={ removeSequence.bind(null, index) } >
+const Close = ({index, handleRemoveSequence }) => (
+        <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
           <span aria-hidden="true">&times;</span>
         </button>
 )
@@ -79,7 +78,7 @@ const sequenceTarget = {
     }
 
     // Time to actually perform the action
-    props.moveSequence(dragIndex, hoverIndex);
+    props.handleMoveSequence(dragIndex, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -113,19 +112,20 @@ class Sequence extends Component {
     index: PropTypes.number.isRequired,
     isDragging: PropTypes.bool.isRequired,
     sequenceField: PropTypes.any.isRequired,
-    moveSequence: PropTypes.func.isRequired,
-    removeSequence: PropTypes.func.isRequired
+    handleMoveSequence: PropTypes.func.isRequired,
+    handleRemoveSequence: PropTypes.func.isRequired
   };
 
   render() {
     const { sequenceField,
-            removeSequence,
+            handleRemoveSequence,
             index,
             isDragging,
             isDraggingTarget,
             connectDragSource,
             connectDropTarget
           } = this.props
+    console.log('Rendering sequences',this.props)
 
     return connectDragSource(connectDropTarget(
       <div className="sequence" 
@@ -154,7 +154,7 @@ class Sequence extends Component {
           </div>
         <Close
           index = { index }
-          removeSequence = { removeSequence }
+          handleRemoveSequence = { handleRemoveSequence }
         />
       </div>
     ));

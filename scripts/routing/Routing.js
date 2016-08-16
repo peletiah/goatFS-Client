@@ -12,13 +12,13 @@ import { Field, FieldArray, reduxForm } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
 
-const renderSequences = ({ fields, moveSequence, removeSequence }) => (
+const renderSequences = ({ fields, handleMoveSequence, handleRemoveSequence }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
-                moveSequence ={ moveSequence }
-                removeSequence = { removeSequence }
+                handleMoveSequence ={ handleMoveSequence }
+                handleRemoveSequence = { handleRemoveSequence }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -41,16 +41,18 @@ class Routing extends Component {
   
   constructor(props) {
     super(props);
-    this.moveSequence = this.moveSequence.bind(this);
+    this.handleMoveSequence = this.handleMoveSequence.bind(this);
+    this.handleRemoveSequence = this.handleRemoveSequence.bind(this);
   }
 
 
   
   componentDidMount() {
     console.log('Loading Route Sequences from server')
+    const csrfToken = store.getState().appState.csrfToken
     fetch('http://localhost:6543/route/1/1', {
       credentials: 'include',
-      headers: {'X-CSRF-TOKEN': this.props.csrfToken
+      headers: {'X-CSRF-TOKEN': csrfToken
     }})
     .then(
       response => response.json()
@@ -73,7 +75,7 @@ class Routing extends Component {
     })      
   }
 
-  moveSequence(dragIndex, hoverIndex) {
+  handleMoveSequence(dragIndex, hoverIndex) {
     const { sequences } = this.props;
     const dragSequence = sequences[dragIndex];
    
@@ -89,7 +91,7 @@ class Routing extends Component {
   }
  
 
-  removeSequence(index) {
+  handleRemoveSequence(index) {
     store.dispatch({
       type:'REMOVE_SEQUENCE',
       index: index
@@ -99,6 +101,29 @@ class Routing extends Component {
     })
 
   }
+
+  handleSaveRoute() {
+    const { sequences } = store.getState().routeState
+    const csrfToken = store.getState().appState.csrfToken
+    fetch('http://localhost:6543/route/1/1', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify (
+        sequences
+      )
+    })
+    .then(
+      response => {
+        console.log(response.json())
+      }
+    )
+  };
+
  
   render() {
     const { sequences } = this.props
@@ -108,10 +133,10 @@ class Routing extends Component {
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
         <FieldArray name="sequences"
             component   =  { renderSequences }
-            moveSequence = { this.moveSequence }
-            removeSequence = { this.removeSequence }
+            handleMoveSequence = { this.handleMoveSequence }
+            handleRemoveSequence = { this.handleRemoveSequence }
         />
-        <button type="button" onClick={ this.saveRoute }>Save</button>
+        <button type="button" onClick={ this.handleSaveRoute }>Save</button>
     </div>
     );
   }

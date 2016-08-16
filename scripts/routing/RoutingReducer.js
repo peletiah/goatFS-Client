@@ -21,9 +21,15 @@ const routeReducer = function (state = initialRouteState, action) {
 
 
     case 'ADD_SEQUENCE':
-      var values = [];
-      state.sequences.map(a => values.push(a.sequence))
-      let highest = Math.max.apply(Math, values)
+      // put sequence-numbers in an array and find the 
+      // currently highest sequence-number
+      var seqArray = [];
+      state.sequences.map(item => seqArray.push(item.sequence))
+      let highest = Math.max.apply(Math, seqArray)
+      // if sequences-Array is empty, we have to set `highest` manually 
+      if (!isFinite(highest)) {
+        highest=0
+      }
       const newSequence = { sequence: highest+=1, data:"", command:"" }
       return update(state, {
         sequences: {
