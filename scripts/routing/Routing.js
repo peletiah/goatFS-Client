@@ -64,8 +64,8 @@ class Routing extends Component {
           sequences: responseData.sequences
         })
       }
-    ),
-    this.props.initialize()
+    )
+    //this.props.initialize()
   };
 
 

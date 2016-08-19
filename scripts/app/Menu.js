@@ -7,6 +7,7 @@ import { Link } from 'react-router';
 import Catalyst from 'react-catalyst';
 import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
+import store from '../store/Store'
 
 @autobind
 class Menu extends React.Component {
@@ -21,10 +22,11 @@ class Menu extends React.Component {
 /*TODO: Don't save menu in state, as it remains unchanged (see https://facebook.github.io/react/docs/thinking-in-react.html#step-3-identify-the-minimal-but-complete-representation-of-ui-state) */
 
   componentDidMount() {
+    const csrfToken = store.getState().appState.csrfToken
     fetch('http://localhost:6543/menu', {
       credentials: 'include',
       headers: {
-        'X-CSRF-TOKEN': this.props.csrfToken
+        'X-CSRF-TOKEN': csrfToken
       }
     }).then(r => r.json())
       .then(data => this.setState({

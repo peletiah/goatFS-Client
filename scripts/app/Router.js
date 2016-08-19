@@ -62,16 +62,6 @@ export default {
         cb(null, require('../other/SimpleForm').default)
       }
     },
-    { path: '/chess',
-      getComponent: (location, cb) => {
-        cb(null, require('../chess/Chess').default)
-      }
-    },
-    { path: '/dnd',
-      getComponent: (location, cb) => {
-        cb(null, require('../dnd_sortable/Sortable').default)
-      }
-    },
     { path: '*',
       getComponent: (location, cb) => {
           cb(null, require('../app/NotFound').default)
