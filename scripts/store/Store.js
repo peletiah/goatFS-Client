@@ -6,8 +6,8 @@ import appReducer from '../app/AppReducer';
 
 
 const reducers = combineReducers({
-  routeState: routeReducer,
-  menuState: menuReducer,
+  route: routeReducer,
+  menu: menuReducer,
   form: formReducer,
   appState: appReducer
 });

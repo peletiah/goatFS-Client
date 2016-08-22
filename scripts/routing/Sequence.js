@@ -125,7 +125,6 @@ class Sequence extends Component {
             connectDragSource,
             connectDropTarget
           } = this.props
-    console.log('Rendering sequences',this.props)
 
     return connectDragSource(connectDropTarget(
       <div className="sequence" 

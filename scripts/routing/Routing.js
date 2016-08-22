@@ -58,10 +58,10 @@ class Routing extends Component {
       response => response.json()
     )
     .then(
-      responseData => {
+      responseJSON => {
         store.dispatch({
           type: 'FETCH_ROUTES_SUCCESS',
-          sequences: responseData.sequences
+          route: responseJSON
         })
       }
     )
@@ -76,9 +76,6 @@ class Routing extends Component {
   }
 
   handleMoveSequence(dragIndex, hoverIndex) {
-    const { sequences } = this.props;
-    const dragSequence = sequences[dragIndex];
-   
     store.dispatch({
       type:'MOVE_SEQUENCE',
       hoverIndex: hoverIndex,
@@ -103,7 +100,7 @@ class Routing extends Component {
   }
 
   handleSaveRoute() {
-    const { sequences } = store.getState().routeState
+    const route = store.getState().route
     const csrfToken = store.getState().appState.csrfToken
     fetch('http://localhost:6543/route/1/1', {
       method: 'POST',
@@ -114,7 +111,7 @@ class Routing extends Component {
       },
       credentials: 'include',
       body: JSON.stringify (
-        sequences
+        route
       )
     })
     .then(
@@ -151,14 +148,14 @@ Routing = reduxForm({
 
 Routing = connect(
   state => ({
-    initialValues: {sequences:state.routeState.sequences}
+    initialValues: {sequences:state.route.sequences}
   })
 )(Routing)
 
 
 const mapStateToProps = function(store) {
-  // maps store.routeState to this.props
-  return store.routeState
+  // maps store.route to this.props
+  return store.route
 }
 
 export default connect(mapStateToProps)(Routing);
