@@ -50,10 +50,15 @@ class Routing extends Component {
   componentDidMount() {
     console.log('Loading Route Sequences from server')
     const csrfToken = store.getState().appState.csrfToken
-    fetch('http://localhost:6543/route/1/1', {
+    fetch('http://api.goatfs.org:6543/route/1', {
       credentials: 'include',
-      headers: {'X-CSRF-TOKEN': csrfToken
-    }})
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin':'goatfs.org',
+        'X-CSRF-TOKEN': csrfToken
+      }
+    })
     .then(
       response => response.json()
     )
@@ -102,7 +107,7 @@ class Routing extends Component {
   handleSaveRoute() {
     const route = store.getState().route
     const csrfToken = store.getState().appState.csrfToken
-    fetch('http://localhost:6543/route/1/1', {
+    fetch('http://api.goatfs.org:6543/route/1', {
       method: 'POST',
       headers: {
         'X-CSRF-TOKEN': csrfToken,

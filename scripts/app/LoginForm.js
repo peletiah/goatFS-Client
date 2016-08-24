@@ -38,7 +38,7 @@ const LoginForm = React.createClass({
     }
 
     console.log('putting login')
-    fetch('http://localhost:6543/sign_in', {
+    fetch('http://api.goatfs.org:6543/sign_in', {
       method: "PUT",
       body: JSON.stringify(login),
       headers: {

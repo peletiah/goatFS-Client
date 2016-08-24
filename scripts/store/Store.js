@@ -1,8 +1,8 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import {reducer as formReducer} from 'redux-form';
 import routeReducer from '../routing/RoutingReducer';
-import menuReducer from '../app/MenuReducer';
 import appReducer from '../app/AppReducer';
+import menuReducer from '../menu/MenuReducer';
 
 
 const reducers = combineReducers({

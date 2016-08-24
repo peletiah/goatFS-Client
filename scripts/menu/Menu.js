@@ -23,7 +23,7 @@ class Menu extends React.Component {
 
   componentDidMount() {
     const csrfToken = store.getState().appState.csrfToken
-    fetch('http://localhost:6543/menu', {
+    fetch('http://api.goatfs.org:6543/menu', {
       credentials: 'include',
       headers: {
         'X-CSRF-TOKEN': csrfToken

@@ -7,7 +7,7 @@ import Catalyst from 'react-catalyst';
 import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
 import cookie from 'react-cookie';
-import Menu from './Menu';
+import Menu from '../menu/Menu';
 import LoginForm from './LoginForm';
 import store from '../store/Store'
 
