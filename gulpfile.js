@@ -6,8 +6,11 @@ var babelify = require('babelify');
 var watchify = require('watchify');
 var notify = require('gulp-notify');
 
-var stylus = require('gulp-stylus');
-var autoprefixer = require('gulp-autoprefixer');
+var sourcemaps = require('gulp-sourcemaps');
+var less = require('gulp-less');
+var path = require('path');
+var LessAutoprefix = require('less-plugin-autoprefix');
+var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var buffer = require('vinyl-buffer');
@@ -18,11 +21,32 @@ var historyApiFallback = require('connect-history-api-fallback')
 
 
 /*
+  Styles Task
+*/
+
+gulp.task('less',function() {
+  // move over fonts
+
+  gulp.src('css/fonts/**.*')
+    .pipe(gulp.dest('build/fonts'))
+
+  // Compiles CSS
+  gulp.src('css/less/main.less')
+    .pipe(sourcemaps.init())
+    .pipe(less({
+      plugins: [autoprefix]
+    }))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest('./build/css/'))
+    .pipe(reload({stream:true}))
+});
+
+/*
   Images
 */
 gulp.task('images',function(){
-  gulp.src('css/images/**')
-    .pipe(gulp.dest('./build/css/images'))
+  gulp.src('css/img/**')
+    .pipe(gulp.dest('./build/img'))
 });
 
 /*
@@ -93,7 +117,7 @@ gulp.task('scripts', function() {
 });
 
 // run 'scripts' task first, then watch for future changes
-gulp.task('default', ['images','scripts','browser-sync'], function() {
-  gulp.watch('css/**/*', ['styles']); // gulp watch for stylus changes
+gulp.task('default', ['images','less','scripts','browser-sync'], function() {
+  gulp.watch('css/**/*', ['less']); // gulp watch for stylus changes
   return buildScript('main.js', true); // browserify watch for JS changes
 });

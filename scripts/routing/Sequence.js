@@ -5,13 +5,15 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ItemTypes from './ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
+import Dropdownlist from 'react-widgets/lib/DropdownList'
+import Multiselect from 'react-widgets/lib/Multiselect'
 
 
 
 
 const renderField = field => (
   <span>
-      <input { ...field.input }/>
+      <input size={30} { ...field.input }/>
       {field.touched && field.error && <span>{ field.error }</span>}
   </span>
 )
@@ -140,17 +142,17 @@ class Sequence extends Component {
         <div className="action">
           <Field
             name={`${sequenceField}.command`}
-            type="text"
-            size="8"
-            component={renderField}
-            placeholder="command"/>
+            component={Dropdownlist}
+            data = {['set','bridge','playback']}
+            defaultValue={'bridge'}
+            valueField = "value"
+            textField="color"
+          />
           <Field
             name={`${sequenceField}.data`}
-            type="text"
-            size="35"
-            component={renderField}
-            placeholder="data"/>
-          </div>
+            component={Multiselect}
+          />
+        </div>
         <Close
           index = { index }
           handleRemoveSequence = { handleRemoveSequence }
