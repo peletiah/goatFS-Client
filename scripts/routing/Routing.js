@@ -26,14 +26,12 @@ const renderSequences = ({ fields, handleMoveSequence, handleRemoveSequence }) =
 )
 
 
-const validate = (values) => {
-  store.dispatch({
-    type: 'ALTER_SEQUENCE',
-    modifiedSequences: values.sequences
-  })
-}
-
-export default validate
+//const validate = (values) => {
+//  store.dispatch({
+//    type: 'ALTER_SEQUENCE',
+//    modifiedSequences: values.sequences
+//  })
+//}
 
 @autobind
 @DragDropContext(HTML5Backend)
@@ -146,7 +144,6 @@ class Routing extends Component {
 
 Routing = reduxForm({
     form: 'sequenceform',
-    validate,
     enableReinitialize: true
   }
 )(Routing)

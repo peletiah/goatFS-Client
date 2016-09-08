@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
 import ItemTypes from './ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
-import Dropdownlist from 'react-widgets/lib/DropdownList'
+import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 
 
@@ -118,7 +118,7 @@ class Sequence extends Component {
     handleRemoveSequence: PropTypes.func.isRequired
   };
 
-  render() {
+    render() {
     const { sequenceField,
             handleRemoveSequence,
             index,
@@ -127,6 +127,13 @@ class Sequence extends Component {
             connectDragSource,
             connectDropTarget
           } = this.props
+
+    var commands = [
+        { id: 0, name: 'set'},
+        { id: 1, name: 'bridge'},
+        { id: 2, name: 'playback'},
+      ]
+
 
     return connectDragSource(connectDropTarget(
       <div className="sequence" 
@@ -139,15 +146,26 @@ class Sequence extends Component {
           name={`${sequenceField}.sequence`}
           type="text"
           component={renderSpan} />
+
+        <div className="action">
+          <DropdownList
+            data = {commands}
+            defaultValue={1}
+            valueField = 'id'
+            textField='name'
+          />
+        </div>
         <div className="action">
           <Field
             name={`${sequenceField}.command`}
-            component={Dropdownlist}
-            data = {['set','bridge','playback']}
-            defaultValue={'bridge'}
-            valueField = "value"
-            textField="color"
+            component={DropdownList}
+            data = {commands}
+            defaultValue={2}
+            valueField = 'id'
+            textField='name'
           />
+        </div>
+        <div className="action">
           <Field
             name={`${sequenceField}.data`}
             component={Multiselect}
