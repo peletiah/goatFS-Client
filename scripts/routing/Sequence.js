@@ -11,14 +11,29 @@ import Multiselect from 'react-widgets/lib/Multiselect'
 
 
 
-const renderField = field => (
-  <span>
-      <input size={30} { ...field.input }/>
-      {field.touched && field.error && <span>{ field.error }</span>}
-  </span>
-)
+const renderDropdownList = ({ input, ...rest}) =>
+  <div>
+    <div>
+      <label>input: </label>
+      <span>{input.name}|{input.valueField}</span>
+    </div>
+    <div>
+      <label>rest: </label>
+      <span>{rest.defaultValue}|{rest.data[0].name}|{rest.textField}|{rest.valueField}</span>
+    </div>
+    
+    <DropdownList {...input} {...rest}/>
+  </div>
 
-const renderSpan = field => (
+
+const renderMultiselect = ({ input, ...rest }) =>
+  <Multiselect {...input}
+    onBlur={() => input.onBlur()}
+    value={ input.value || [] }
+    {...rest}/>
+
+
+const renderOrder = field => (
   <span className="sequence-order">
     {field.input.value}
   </span>
@@ -125,7 +140,8 @@ class Sequence extends Component {
             isDragging,
             isDraggingTarget,
             connectDragSource,
-            connectDropTarget
+            connectDropTarget,
+            commandValue
           } = this.props
 
     var commands = [
@@ -133,6 +149,9 @@ class Sequence extends Component {
         { id: 1, name: 'bridge'},
         { id: 2, name: 'playback'},
       ]
+
+
+    console.log(`schwurbel: ${commandValue}`)
 
 
     return connectDragSource(connectDropTarget(
@@ -145,36 +164,32 @@ class Sequence extends Component {
         <Field
           name={`${sequenceField}.sequence`}
           type="text"
-          component={renderSpan} />
+          component={renderOrder} />
 
-        <div className="action">
-          <DropdownList
-            data = {commands}
-            defaultValue={1}
-            valueField = 'id'
-            textField='name'
-          />
-        </div>
         <div className="action">
           <Field
             name={`${sequenceField}.command`}
-            component={DropdownList}
+            component={renderDropdownList}
             data = {commands}
             defaultValue={2}
             valueField = 'id'
-            textField='name'
-          />
+            textField='name'/>
         </div>
         <div className="action">
           <Field
-            name={`${sequenceField}.data`}
-            component={Multiselect}
+            name={`${sequenceField}.id`}
+            component={renderMultiselect}
+            data={['John - 200','Anna - 300','Rüdiger - 357']}
+            defaultValue={['John - 200']}
           />
         </div>
         <Close
           index = { index }
           handleRemoveSequence = { handleRemoveSequence }
         />
+        <div>
+          \\\{commandValue}///
+        </div>
       </div>
     ));
   }

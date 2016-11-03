@@ -8,11 +8,13 @@ import autobind from 'autobind-decorator'
 import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { Field, FieldArray, reduxForm } from 'redux-form';
+import { Field, FieldArray, reduxForm, formValueSelector } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
+import Multiselect from 'react-widgets/lib/Multiselect'
+import _ from 'underscore'
 
-const renderSequences = ({ fields, handleMoveSequence, handleRemoveSequence }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
@@ -33,7 +35,13 @@ const renderSequences = ({ fields, handleMoveSequence, handleRemoveSequence }) =
 //  })
 //}
 
-@autobind
+const doMultiselect = ({ input, ...rest }) =>
+  <Multiselect {...input}
+      onBlur={() => input.onBlur()}
+          value={input.value || []} // requires value to be an array
+              {...rest}/>
+
+
 @DragDropContext(HTML5Backend)
 class Routing extends Component {
   
@@ -124,13 +132,31 @@ class Routing extends Component {
     )
   };
 
+
+
  
   render() {
-    const { sequences } = this.props
+    const { sequences, blaValue, commandValue } = this.props
 
     return (
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
+        <div>
+          <label>blablu</label>
+          <Field name="blablu" component="input" type="text"/>
+        </div>
+
+        <div>
+          <label>blable</label>
+          <Field name="blable" component={doMultiselect} data={['bla','blu']}/>
+        </div>
+        <div>
+          <span>commandValue: {commandValue}</span>
+        </div>
+        <div>
+          <span>blaValue: {blaValue}</span>
+        </div>
+
         <FieldArray name="sequences"
             component   =  { renderSequences }
             handleMoveSequence = { this.handleMoveSequence }
@@ -143,14 +169,19 @@ class Routing extends Component {
 };
 
 Routing = reduxForm({
-    form: 'sequenceform',
+    form: 'routingForm',
     enableReinitialize: true
   }
 )(Routing)
 
+const selector = formValueSelector("routingForm")
+const getChild = _.property("command")
+
 Routing = connect(
   state => ({
-    initialValues: {sequences:state.route.sequences}
+    initialValues: {sequences:state.route.sequences},
+    commandValue: selector(state, "sequences[0].command.name"),
+    blaValue: selector(state, "blable")
   })
 )(Routing)
 
@@ -161,4 +192,3 @@ const mapStateToProps = function(store) {
 }
 
 export default connect(mapStateToProps)(Routing);
-
