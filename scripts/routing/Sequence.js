@@ -137,9 +137,9 @@ class Sequence extends Component {
           } = this.props
 
     var commands = [
-        { id: 0, name: 'set'},
-        { id: 1, name: 'bridge'},
-        { id: 2, name: 'playback'},
+        'set',
+        'bridge',
+        'playback'
       ]
 
 
@@ -161,11 +161,10 @@ class Sequence extends Component {
         <div className="action">
           <Field
             name={`${sequenceField}.command`}
+            value={`${sequenceField}.command`}
             component={renderDropdownList}
             data = {commands}
-            defaultValue={2}
-            valueField = 'id'
-            textField='name'/>
+            defaultValue={'log'}/>
         </div>
         <div className="action">
           <Field
@@ -180,7 +179,7 @@ class Sequence extends Component {
           handleRemoveSequence = { handleRemoveSequence }
         />
         {sequenceFormArray && sequenceFormArray[0] && <div>
-          \\\{sequenceFormArray[0].command.name}///
+          \\\{sequenceFormArray[0].command}///
         </div>}
       </div>
     ));

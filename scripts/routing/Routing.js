@@ -143,7 +143,7 @@ class Routing extends Component {
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
         {sequenceFormArray && sequenceFormArray[0] && <div>
-          <span>sequenceFormArray: {sequenceFormArray[0].command.name}</span>
+          <span>sequenceFormArray: {sequenceFormArray[0].command}</span>
         </div>}
         <FieldArray name="sequences"
             component   =  { renderSequences }
@@ -164,7 +164,6 @@ Routing = reduxForm({
 )(Routing)
 
 const selector = formValueSelector("routingForm")
-const getChild = _.property("command")
 
 Routing = connect(
   state => ({
