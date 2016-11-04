@@ -14,7 +14,7 @@ import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, commandValue }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
@@ -22,7 +22,9 @@ const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence,
                 handleMoveSequence ={ handleMoveSequence }
                 handleRemoveSequence = { handleRemoveSequence }
                 className="sequence" 
-                sequenceField={ sequenceField } />
+                sequenceField={ sequenceField }
+                commandValue = { commandValue }
+                />
     )}
   </div>
 )
@@ -34,12 +36,6 @@ const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence,
 //    modifiedSequences: values.sequences
 //  })
 //}
-
-const doMultiselect = ({ input, ...rest }) =>
-  <Multiselect {...input}
-      onBlur={() => input.onBlur()}
-          value={input.value || []} // requires value to be an array
-              {...rest}/>
 
 
 @DragDropContext(HTML5Backend)
@@ -136,27 +132,21 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, blaValue, commandValue } = this.props
+    const { sequences, sequenceCommands } = this.props
+
+    console.log(`asdf: ${sequenceCommands}`)
+    if (sequences.sequences[0]){
+      console.log(`brumsti: ${sequences.sequences[0].command}`)
+    }
+
 
     return (
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
-        <div>
-          <label>blablu</label>
-          <Field name="blablu" component="input" type="text"/>
-        </div>
-
-        <div>
-          <label>blable</label>
-          <Field name="blable" component={doMultiselect} data={['bla','blu']}/>
-        </div>
-        <div>
-          <span>commandValue: {commandValue}</span>
-        </div>
-        <div>
-          <span>blaValue: {blaValue}</span>
-        </div>
-
+        {sequenceCommands && <div>
+          <span>commandvalue: {sequenceCommands.sequences}</span>
+        </div>}
+             
         <FieldArray name="sequences"
             component   =  { renderSequences }
             handleMoveSequence = { this.handleMoveSequence }
@@ -179,16 +169,22 @@ const getChild = _.property("command")
 
 Routing = connect(
   state => ({
-    initialValues: {sequences:state.route.sequences},
-    commandValue: selector(state, "sequences[0].command.name"),
-    blaValue: selector(state, "blable")
+    initialValues: {sequences:state.route.sequences}
   })
 )(Routing)
 
 
-const mapStateToProps = function(store) {
+const mapStateToProps = (store, state) => {
+  const sequenceFormArray = selector(state, 'sequences')
+  const sequenceCommands = sequenceFormArray && sequenceFormArray.map(
+    ({sequence}) => sequence && sequence.command
+  )
   // maps store.route to this.props
-  return store.route
-}
+  return {
+    sequences: store.route,
+    sequenceCommands: sequenceCommands
+  }
+  }
+
 
 export default connect(mapStateToProps)(Routing);

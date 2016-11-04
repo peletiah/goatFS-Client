@@ -13,13 +13,9 @@ import Multiselect from 'react-widgets/lib/Multiselect'
 
 const renderDropdownList = ({ input, ...rest}) =>
   <div>
-    <div>
-      <label>input: </label>
-      <span>{input.name}|{input.valueField}</span>
-    </div>
-    <div>
+   <div>
       <label>rest: </label>
-      <span>{rest.defaultValue}|{rest.data[0].name}|{rest.textField}|{rest.valueField}</span>
+      <span>{rest.defaultValue}|{rest.value}</span>
     </div>
     
     <DropdownList {...input} {...rest}/>
@@ -145,9 +141,9 @@ class Sequence extends Component {
           } = this.props
 
     var commands = [
-        { id: 0, name: 'set'},
-        { id: 1, name: 'bridge'},
-        { id: 2, name: 'playback'},
+        'set',
+        'bridge',
+        'playback'
       ]
 
 
@@ -169,11 +165,11 @@ class Sequence extends Component {
         <div className="action">
           <Field
             name={`${sequenceField}.command`}
+            value={`${sequenceField}.command`}
             component={renderDropdownList}
             data = {commands}
-            defaultValue={2}
-            valueField = 'id'
-            textField='name'/>
+            defaultValue={"bridge"}
+            />
         </div>
         <div className="action">
           <Field
