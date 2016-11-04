@@ -14,13 +14,14 @@ import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
                 handleMoveSequence ={ handleMoveSequence }
                 handleRemoveSequence = { handleRemoveSequence }
+                sequenceFormArray = { sequenceFormArray }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -136,31 +137,19 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, blaValue, commandValue } = this.props
+    const { sequences, sequenceFormArray } = this.props
 
     return (
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
-        <div>
-          <label>blablu</label>
-          <Field name="blablu" component="input" type="text"/>
-        </div>
-
-        <div>
-          <label>blable</label>
-          <Field name="blable" component={doMultiselect} data={['bla','blu']}/>
-        </div>
-        {commandValue && commandValue[0] && <div>
-          <span>commandValue: {commandValue[0].command.name}</span>
+        {sequenceFormArray && sequenceFormArray[0] && <div>
+          <span>sequenceFormArray: {sequenceFormArray[0].command.name}</span>
         </div>}
-        <div>
-          <span>blaValue: {blaValue}</span>
-        </div>
-
         <FieldArray name="sequences"
             component   =  { renderSequences }
             handleMoveSequence = { this.handleMoveSequence }
             handleRemoveSequence = { this.handleRemoveSequence }
+            sequenceFormArray = { sequenceFormArray }
         />
         <button type="button" onClick={ this.handleSaveRoute }>Save</button>
     </div>
@@ -180,8 +169,7 @@ const getChild = _.property("command")
 Routing = connect(
   state => ({
     initialValues: {sequences:state.route.sequences},
-    commandValue: selector(state, "sequences"),
-    blaValue: selector(state, "blable")
+    sequenceFormArray: selector(state, "sequences"),
   })
 )(Routing)
 
