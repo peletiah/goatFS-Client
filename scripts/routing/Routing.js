@@ -150,9 +150,9 @@ class Routing extends Component {
           <label>blable</label>
           <Field name="blable" component={doMultiselect} data={['bla','blu']}/>
         </div>
-        <div>
-          <span>commandValue: {commandValue}</span>
-        </div>
+        {commandValue && commandValue[0] && <div>
+          <span>commandValue: {commandValue[0].command.name}</span>
+        </div>}
         <div>
           <span>blaValue: {blaValue}</span>
         </div>
@@ -180,7 +180,7 @@ const getChild = _.property("command")
 Routing = connect(
   state => ({
     initialValues: {sequences:state.route.sequences},
-    commandValue: selector(state, "sequences[0].command.name"),
+    commandValue: selector(state, "sequences"),
     blaValue: selector(state, "blable")
   })
 )(Routing)
