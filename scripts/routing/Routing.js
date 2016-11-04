@@ -14,17 +14,16 @@ import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, commandValue }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
   <div className="route">
     {fields.map((sequenceField, index) =>
       <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
                 handleMoveSequence ={ handleMoveSequence }
                 handleRemoveSequence = { handleRemoveSequence }
+                sequenceFormArray = { sequenceFormArray }
                 className="sequence" 
-                sequenceField={ sequenceField }
-                commandValue = { commandValue }
-                />
+                sequenceField={ sequenceField } />
     )}
   </div>
 )
@@ -36,6 +35,12 @@ const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence,
 //    modifiedSequences: values.sequences
 //  })
 //}
+
+const doMultiselect = ({ input, ...rest }) =>
+  <Multiselect {...input}
+      onBlur={() => input.onBlur()}
+          value={input.value || []} // requires value to be an array
+              {...rest}/>
 
 
 @DragDropContext(HTML5Backend)
@@ -132,25 +137,19 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, sequenceCommands } = this.props
-
-    console.log(`asdf: ${sequenceCommands}`)
-    if (sequences.sequences[0]){
-      console.log(`brumsti: ${sequences.sequences[0].command}`)
-    }
-
+    const { sequences, sequenceFormArray } = this.props
 
     return (
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
-        {sequenceCommands && <div>
-          <span>commandvalue: {sequenceCommands.sequences}</span>
+        {sequenceFormArray && sequenceFormArray[0] && <div>
+          <span>sequenceFormArray: {sequenceFormArray[0].command}</span>
         </div>}
-             
         <FieldArray name="sequences"
             component   =  { renderSequences }
             handleMoveSequence = { this.handleMoveSequence }
             handleRemoveSequence = { this.handleRemoveSequence }
+            sequenceFormArray = { sequenceFormArray }
         />
         <button type="button" onClick={ this.handleSaveRoute }>Save</button>
     </div>
@@ -165,26 +164,18 @@ Routing = reduxForm({
 )(Routing)
 
 const selector = formValueSelector("routingForm")
-const getChild = _.property("command")
 
 Routing = connect(
   state => ({
-    initialValues: {sequences:state.route.sequences}
+    initialValues: {sequences:state.route.sequences},
+    sequenceFormArray: selector(state, "sequences"),
   })
 )(Routing)
 
 
-const mapStateToProps = (store, state) => {
-  const sequenceFormArray = selector(state, 'sequences')
-  const sequenceCommands = sequenceFormArray && sequenceFormArray.map(
-    ({sequence}) => sequence && sequence.command
-  )
+const mapStateToProps = function(store) {
   // maps store.route to this.props
-  return {
-    sequences: store.route,
-    sequenceCommands: sequenceCommands
-  }
-  }
-
+  return store.route
+}
 
 export default connect(mapStateToProps)(Routing);

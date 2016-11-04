@@ -13,11 +13,6 @@ import Multiselect from 'react-widgets/lib/Multiselect'
 
 const renderDropdownList = ({ input, ...rest}) =>
   <div>
-   <div>
-      <label>rest: </label>
-      <span>{rest.defaultValue}|{rest.value}</span>
-    </div>
-    
     <DropdownList {...input} {...rest}/>
   </div>
 
@@ -126,7 +121,8 @@ class Sequence extends Component {
     isDragging: PropTypes.bool.isRequired,
     sequenceField: PropTypes.any.isRequired,
     handleMoveSequence: PropTypes.func.isRequired,
-    handleRemoveSequence: PropTypes.func.isRequired
+    handleRemoveSequence: PropTypes.func.isRequired,
+    sequenceFormArray: PropTypes.any.isRequired
   };
 
     render() {
@@ -137,7 +133,7 @@ class Sequence extends Component {
             isDraggingTarget,
             connectDragSource,
             connectDropTarget,
-            commandValue
+            sequenceFormArray
           } = this.props
 
     var commands = [
@@ -147,7 +143,7 @@ class Sequence extends Component {
       ]
 
 
-    console.log(`schwurbel: ${commandValue}`)
+    console.log(`schwurbel: ${sequenceFormArray}`)
 
 
     return connectDragSource(connectDropTarget(
@@ -168,8 +164,7 @@ class Sequence extends Component {
             value={`${sequenceField}.command`}
             component={renderDropdownList}
             data = {commands}
-            defaultValue={"bridge"}
-            />
+            defaultValue={'log'}/>
         </div>
         <div className="action">
           <Field
@@ -183,9 +178,9 @@ class Sequence extends Component {
           index = { index }
           handleRemoveSequence = { handleRemoveSequence }
         />
-        <div>
-          \\\{commandValue}///
-        </div>
+        {sequenceFormArray && sequenceFormArray[0] && <div>
+          \\\{sequenceFormArray[0].command}///
+        </div>}
       </div>
     ));
   }
