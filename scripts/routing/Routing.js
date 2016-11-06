@@ -16,12 +16,12 @@ import _ from 'underscore'
 
 const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
   <div className="route">
-    {fields.map((sequenceField, index) =>
-      <Sequence key={ `${sequenceField}.sequence` } 
+    {fields.map((sequenceField, index) => 
+          <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
                 handleMoveSequence ={ handleMoveSequence }
                 handleRemoveSequence = { handleRemoveSequence }
-                sequenceFormArray = { sequenceFormArray }
+                sequenceFormArray = { sequenceFormArray[index] }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -142,9 +142,6 @@ class Routing extends Component {
     return (
       <div>
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
-        {sequenceFormArray && sequenceFormArray[0] && <div>
-          <span>sequenceFormArray: {sequenceFormArray[0].command}</span>
-        </div>}
         <FieldArray name="sequences"
             component   =  { renderSequences }
             handleMoveSequence = { this.handleMoveSequence }
@@ -152,6 +149,10 @@ class Routing extends Component {
             sequenceFormArray = { sequenceFormArray }
         />
         <button type="button" onClick={ this.handleSaveRoute }>Save</button>
+        {sequenceFormArray && sequenceFormArray[0] && <div>
+          <span>sequenceFormArray: {sequenceFormArray[0].command}</span>
+        </div>}
+
     </div>
     );
   }

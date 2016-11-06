@@ -21,6 +21,7 @@ const renderMultiselect = ({ input, ...rest }) =>
   <Multiselect {...input}
     onBlur={() => input.onBlur()}
     value={ input.value || [] }
+    onCreate = {input._create}
     {...rest}/>
 
 
@@ -143,7 +144,9 @@ class Sequence extends Component {
       ]
 
 
-    console.log(`schwurbel: ${sequenceFormArray}`)
+    console.log(sequenceField)
+
+    //if (sequenceFormArray && sequenceFormArray[0] && sequenceFormArray[ 
 
 
     return connectDragSource(connectDropTarget(
@@ -166,21 +169,33 @@ class Sequence extends Component {
             data = {commands}
             defaultValue={'log'}/>
         </div>
+        
         <div className="action">
+
+          {sequenceFormArray.command == "bridge" &&           
           <Field
             name={`${sequenceField}.id`}
             component={renderMultiselect}
-            data={['John - 200','Anna - 300','Rüdiger - 357']}
+            data={['John - 200','Anna - 300','Rüdiger - 357','Brumsti - 345','asdf - 654','ghj - 565','giogjoisfjgs - 5463456345','htrhtrhererhtrhtr - 5464545645645','fgfdgfdgdgsdfgsdf - 534534534534']}
             defaultValue={['John - 200']}
-          />
+          />}
+
+          { sequenceFormArray.command != "bridge" &&           
+            <div className="rw-widget rw-multiselect">
+              <Field
+                name={`${sequenceField}.id`}
+                component="input"
+                type="text"
+                value={`${sequenceField}.value`}
+              />
+            </div> }
+
+            
         </div>
         <Close
           index = { index }
           handleRemoveSequence = { handleRemoveSequence }
         />
-        {sequenceFormArray && sequenceFormArray[0] && <div>
-          \\\{sequenceFormArray[0].command}///
-        </div>}
       </div>
     ));
   }

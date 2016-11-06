@@ -45,19 +45,21 @@
 
 .rw-multiselect-taglist {
   .list-inline();
-  padding-right: 0;
 
   > li {
     display:            inline-block;
-    margin:             1px;
-    padding:            0.214em 0.15em 0.214em 0.4em;
+    margin:             1px 0 1px 5px;
+    padding:            0;
     line-height:        1.4em;
     text-align:         center;
     white-space:        nowrap;
-    border-radius:      @border-radius-sm;
-    border:             1px solid @btn-border;
-    background-color:   @btn-border;
+    border-radius:      2px; //custom modification, CB 2016-11-06
+    border:             1px solid @tag-li-border; //custom modification
+    background-color:   @tag-li-bg;
     cursor:             pointer;
+    color:              #007eff;
+    font-size:          0.9em;
+    vertical-align:     middle;
 
     &.rw-state-focus {
       .state-focus();
