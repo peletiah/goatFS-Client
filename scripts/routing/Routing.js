@@ -4,17 +4,18 @@
 
 import React, { Component } from 'react'
 import update from 'react/lib/update';
-import autobind from 'autobind-decorator'
+import autobind from 'autobind-decorator';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { Field, FieldArray, reduxForm, formValueSelector } from 'redux-form';
+import { Field, FieldArray, reduxForm, formValueSelector, change } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray, changeHandler }) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
           <Sequence key={ `${sequenceField}.sequence` } 
@@ -23,25 +24,12 @@ const renderSequences = ({ fields, meta: { touched, error }, handleModifySequenc
                 handleMoveSequence    = { handleMoveSequence }
                 handleRemoveSequence  = { handleRemoveSequence }
                 sequenceFormArray     = { sequenceFormArray[index] }
+                changeHandler         = { changeHandler }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
   </div>
 )
-
-
-//const validate = (values) => {
-//  store.dispatch({
-//    type: 'ALTER_SEQUENCE',
-//    modifiedSequences: values.sequences
-//  })
-//}
-
-const doMultiselect = ({ input, ...rest }) =>
-  <Multiselect {...input}
-      onBlur={() => input.onBlur()}
-          value={input.value || []} // requires value to be an array
-              {...rest}/>
 
 
 @DragDropContext(HTML5Backend)
@@ -88,9 +76,10 @@ class Routing extends Component {
     })      
   }
 
-  handleModifySequence(value) {
+  handleModifySequence(value, input) {
     console.log('from motherfucker')
     console.log(value)
+    console.log(input)
     console.log('from motherfucker end')
     //store.dispatch({
     //type: 'ALTER_SEQUENCE',
@@ -148,7 +137,10 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, sequenceFormArray } = this.props
+    const { sequences, changeHandler, sequenceFormArray } = this.props
+
+    console.log('in routing render')
+    console.log(this.props)               
 
     return (
       <div>
@@ -157,6 +149,7 @@ class Routing extends Component {
             component   =  { renderSequences }
             handleModifySequence = { this.handleModifySequence }
             handleMoveSequence = { this.handleMoveSequence }
+            changeHandler = { changeHandler }
             handleRemoveSequence = { this.handleRemoveSequence }
             sequenceFormArray = { sequenceFormArray }
         />
@@ -185,10 +178,13 @@ Routing = connect(
   })
 )(Routing)
 
+const mapDispatchToProps = (dispatch) => ({
+    changeHandler: bindActionCreators(change, dispatch)
+})
 
 const mapStateToProps = function(store) {
   // maps store.route to this.props
   return store.route
 }
 
-export default connect(mapStateToProps)(Routing);
+export default connect(mapStateToProps, mapDispatchToProps)(Routing);

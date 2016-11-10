@@ -9,31 +9,31 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 
 
-
-
 const renderDropdownList = ({ input, ...rest}) =>
   <div>
     <DropdownList {...input} {...rest}/>
   </div>
 
-
-const renderMultiselect = ({ input, ...rest }) =>
-  <Multiselect {...input}
-    onBlur={() => input.onBlur()}
-    value={ input.value || [] }
-    onCreate = {input._create}
-    {...rest}/>
-
-class testRenderMultiselect extends Component {
+class renderMultiselect extends Component {
 	render() {
+    console.log('in renderMultiselect')
 		console.log(this.props)
-		const { input, data, handleModifySequence } = this.props
+		const { input, data, handleModifySequence, changeHandler } = this.props
+   
+    //test if data is already an array
+    //TODO cleaner data-values from api
+    if ( typeof input.value.data === 'string' ) {
+      var blablu = [input.value.data]
+    } else {
+      var blablu = input.value.data
+    }
+
 		return (
 			<div>
 				<Multiselect 
-					value = { input.value || [] } 
-					onChange = { value => {input.onChange(value); handleModifySequence(value)} }
-					data = {data }
+					value = { blablu || [] } 
+          onChange = { value => { changeHandler('routingForm',input.name+'.data',value); handleModifySequence(value, input.value); } }
+					data = { data }
 					placeholder = 'User/Extension'
 				/>
 			</div>
@@ -152,7 +152,8 @@ class Sequence extends Component {
             isDraggingTarget,
             connectDragSource,
             connectDropTarget,
-            sequenceFormArray
+            sequenceFormArray,
+            changeHandler
           } = this.props
 
     var commands = [
@@ -163,6 +164,8 @@ class Sequence extends Component {
 
 
     console.log(sequenceField)
+    console.log(this.props)
+    console.log(sequenceFormArray)
 
     //if (sequenceFormArray && sequenceFormArray[0] && sequenceFormArray[ 
 
@@ -192,11 +195,12 @@ class Sequence extends Component {
 
           {sequenceFormArray.command == "bridge" &&           
           <Field
-            name={`${sequenceField}.id`}
-            component={testRenderMultiselect}
+            name={`${sequenceField}`}
+            component={renderMultiselect}
             data={['John - 200','Anna - 300','Rüdiger - 357','Brumsti - 345','asdf - 654','ghj - 565','giogjoisfjgs - 5463456345','htrhtrhererhtrhtr - 5464545645645','fgfdgfdgdgsdfgsdf - 534534534534']}
             defaultValue={['John - 200']}
 						handleModifySequence = { handleModifySequence }
+            changeHandler = { changeHandler }
           />}
 
           { sequenceFormArray.command != "bridge" &&           
