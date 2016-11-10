@@ -24,6 +24,23 @@ const renderMultiselect = ({ input, ...rest }) =>
     onCreate = {input._create}
     {...rest}/>
 
+class testRenderMultiselect extends Component {
+	render() {
+		console.log(this.props)
+		const { input, data, handleModifySequence } = this.props
+		return (
+			<div>
+				<Multiselect 
+					value = { input.value || [] } 
+					onChange = { value => {input.onChange(value); handleModifySequence(value)} }
+					data = {data }
+					placeholder = 'User/Extension'
+				/>
+			</div>
+		)
+	}
+}
+
 
 const renderOrder = field => (
   <span className="sequence-order">
@@ -128,6 +145,7 @@ class Sequence extends Component {
 
     render() {
     const { sequenceField,
+						handleModifySequence,
             handleRemoveSequence,
             index,
             isDragging,
@@ -175,9 +193,10 @@ class Sequence extends Component {
           {sequenceFormArray.command == "bridge" &&           
           <Field
             name={`${sequenceField}.id`}
-            component={renderMultiselect}
+            component={testRenderMultiselect}
             data={['John - 200','Anna - 300','Rüdiger - 357','Brumsti - 345','asdf - 654','ghj - 565','giogjoisfjgs - 5463456345','htrhtrhererhtrhtr - 5464545645645','fgfdgfdgdgsdfgsdf - 534534534534']}
             defaultValue={['John - 200']}
+						handleModifySequence = { handleModifySequence }
           />}
 
           { sequenceFormArray.command != "bridge" &&           

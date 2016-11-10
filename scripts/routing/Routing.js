@@ -14,14 +14,15 @@ import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray }) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
           <Sequence key={ `${sequenceField}.sequence` } 
                 index={ index }
-                handleMoveSequence ={ handleMoveSequence }
-                handleRemoveSequence = { handleRemoveSequence }
-                sequenceFormArray = { sequenceFormArray[index] }
+                handleModifySequence  = { handleModifySequence }
+                handleMoveSequence    = { handleMoveSequence }
+                handleRemoveSequence  = { handleRemoveSequence }
+                sequenceFormArray     = { sequenceFormArray[index] }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -87,6 +88,16 @@ class Routing extends Component {
     })      
   }
 
+  handleModifySequence(value) {
+    console.log('from motherfucker')
+    console.log(value)
+    console.log('from motherfucker end')
+    //store.dispatch({
+    //type: 'ALTER_SEQUENCE',
+    //modifiedSequences: values.sequences})
+  }
+
+
   handleMoveSequence(dragIndex, hoverIndex) {
     store.dispatch({
       type:'MOVE_SEQUENCE',
@@ -144,6 +155,7 @@ class Routing extends Component {
         <button type="button" onClick={ this.handleAddSequence }>Add Sequence</button>
         <FieldArray name="sequences"
             component   =  { renderSequences }
+            handleModifySequence = { this.handleModifySequence }
             handleMoveSequence = { this.handleMoveSequence }
             handleRemoveSequence = { this.handleRemoveSequence }
             sequenceFormArray = { sequenceFormArray }
