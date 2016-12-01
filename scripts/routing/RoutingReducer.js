@@ -14,10 +14,25 @@ const routeReducer = function (state = initialRouteState, action) {
       return Object.assign({}, state, { id: action.route.id, sequences: action.route.sequences });
 
     case 'ALTER_SEQUENCE':
-      /* Receives array of sequences from redux-form-validation
-      and writes it to state.sequences
+      /*  
       */
-      return {id: state.id, sequences: action.modifiedSequences}
+
+      console.log('AAAAAAAAAAAAAAAAAAAAAHHHHHHHHHH!')
+      if (action.field == 'command')
+        {
+          var updatedSequence = Object.assign({}, action.modifiedSequence, {command: action.change});
+        }
+      else if (action.field == 'data')
+        {
+          var updatedSequence = Object.assign({}, action.modifiedSequence, {data: action.change});
+        };
+      //$splice: replace one item in sequences at action.index
+      return update(state, {
+        sequences: {
+          $splice: 
+            [[action.index,1,updatedSequence]]
+        }
+      });
 
     case 'MOVE_SEQUENCE':
       const { dragIndex, hoverIndex } = action

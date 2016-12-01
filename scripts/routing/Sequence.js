@@ -9,32 +9,69 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
 
 
-const renderDropdownList = ({ input, ...rest}) =>
-  <div>
-    <DropdownList {...input} {...rest}/>
-  </div>
+class renderDropdownList extends Component {
+  render() {
+		const { input, data, handleModifySequence, changeHandler, index } = this.props
+
+    //console.log('Dropdown')
+    //console.log(input)
+
+  return (
+    <div>
+      <DropdownList
+        value = { input.value.command }
+        data = { data }
+        onChange = { value => { changeHandler('routingForm',input.name+'.command',value); handleModifySequence(index, value, input.value, 'command'); } }
+      />
+    </div>
+  )
+  }
+}
 
 class renderMultiselect extends Component {
 	render() {
-    console.log('in renderMultiselect')
-		console.log(this.props)
-		const { input, data, handleModifySequence, changeHandler } = this.props
-   
+		const { input, data, handleModifySequence, changeHandler, index } = this.props
+  
     //test if data is already an array
     //TODO cleaner data-values from api
     if ( typeof input.value.data === 'string' ) {
-      var blablu = [input.value.data]
+      var value = [input.value.data]
     } else {
-      var blablu = input.value.data
+      var value = input.value.data
     }
 
 		return (
 			<div>
 				<Multiselect 
-					value = { blablu || [] } 
-          onChange = { value => { changeHandler('routingForm',input.name+'.data',value); handleModifySequence(value, input.value); } }
+					value = { value || [] } 
+          onChange = { value => { changeHandler('routingForm',input.name+'.data',value); handleModifySequence(index, value, input.value, 'data'); } }
 					data = { data }
 					placeholder = 'User/Extension'
+				/>
+			</div>
+		)
+	}
+}
+
+class renderInput extends Component {
+	render() {
+		const { input, handleModifySequence, blurHandler, index } = this.props
+
+    if ( typeof input.value.data === 'string' ) {
+      var bla = input.value.data
+    }
+
+    console.log(bla)
+
+		return (
+			<div>
+				<Field
+          name = { input.name }
+					value = { bla || '' } 
+          onBlur = { value => { blurHandler('routingForm',input.name+'.data',value); handleModifySequence(index, value, input.value, 'data'); } }
+          component = 'input'
+          type = 'text'
+          placeholder = 'test'
 				/>
 			</div>
 		)
@@ -153,7 +190,8 @@ class Sequence extends Component {
             connectDragSource,
             connectDropTarget,
             sequenceFormArray,
-            changeHandler
+            changeHandler,
+            blurHandler
           } = this.props
 
     var commands = [
@@ -161,13 +199,6 @@ class Sequence extends Component {
         'bridge',
         'playback'
       ]
-
-
-    console.log(sequenceField)
-    console.log(this.props)
-    console.log(sequenceFormArray)
-
-    //if (sequenceFormArray && sequenceFormArray[0] && sequenceFormArray[ 
 
 
     return connectDragSource(connectDropTarget(
@@ -184,11 +215,15 @@ class Sequence extends Component {
 
         <div className="action">
           <Field
-            name={`${sequenceField}.command`}
+            name={`${sequenceField}`}
             value={`${sequenceField}.command`}
             component={renderDropdownList}
             data = {commands}
-            defaultValue={'log'}/>
+            defaultValue={'log'}
+						handleModifySequence = { handleModifySequence }
+            changeHandler = { changeHandler }
+            index = { index }
+          />
         </div>
         
         <div className="action">
@@ -201,9 +236,21 @@ class Sequence extends Component {
             defaultValue={['John - 200']}
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
+            index = { index }
           />}
 
-          { sequenceFormArray.command != "bridge" &&           
+          {/*{sequenceFormArray.command != "bridge" &&           
+            <Field
+              name={`${sequenceField}`}
+              component={renderInput}
+					  	handleModifySequence = { handleModifySequence }
+              blurHandler = { blurHandler }
+              index = { index }
+            />
+          */}
+
+
+          { sequenceFormArray.command != "bridge" && 
             <div className="rw-widget rw-multiselect">
               <Field
                 name={`${sequenceField}.id`}

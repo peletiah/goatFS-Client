@@ -9,13 +9,12 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import { Field, FieldArray, reduxForm, formValueSelector, change } from 'redux-form';
+import { Field, FieldArray, reduxForm, formValueSelector, change, blur } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
-import _ from 'underscore'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray, changeHandler }) => (
+const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray, changeHandler, blurHandler }) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
           <Sequence key={ `${sequenceField}.sequence` } 
@@ -25,6 +24,7 @@ const renderSequences = ({ fields, meta: { touched, error }, handleModifySequenc
                 handleRemoveSequence  = { handleRemoveSequence }
                 sequenceFormArray     = { sequenceFormArray[index] }
                 changeHandler         = { changeHandler }
+                blurHandler         = { blurHandler }
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -76,14 +76,20 @@ class Routing extends Component {
     })      
   }
 
-  handleModifySequence(value, input) {
-    console.log('from motherfucker')
-    console.log(value)
-    console.log(input)
-    console.log('from motherfucker end')
-    //store.dispatch({
-    //type: 'ALTER_SEQUENCE',
-    //modifiedSequences: values.sequences})
+  handleModifySequence(index, change, sequence, field) {
+    //console.log('from motherfucker')
+    //console.log('index',index)
+    //console.log('sequence',sequence)
+    //console.log('change',change)
+    //console.log('field',field)
+    //console.log('from motherfucker end')
+    store.dispatch({
+    type: 'ALTER_SEQUENCE',
+    index: index,
+    modifiedSequence: sequence,
+    change: change,
+    field: field
+    })
   }
 
 
@@ -137,10 +143,8 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, changeHandler, sequenceFormArray } = this.props
+    const { sequences, changeHandler, blurHandler, sequenceFormArray } = this.props
 
-    console.log('in routing render')
-    console.log(this.props)               
 
     return (
       <div>
@@ -150,6 +154,7 @@ class Routing extends Component {
             handleModifySequence = { this.handleModifySequence }
             handleMoveSequence = { this.handleMoveSequence }
             changeHandler = { changeHandler }
+            blurHandler = { blurHandler }
             handleRemoveSequence = { this.handleRemoveSequence }
             sequenceFormArray = { sequenceFormArray }
         />
@@ -179,6 +184,7 @@ Routing = connect(
 )(Routing)
 
 const mapDispatchToProps = (dispatch) => ({
+    blurHandler: bindActionCreators(blur, dispatch),
     changeHandler: bindActionCreators(change, dispatch)
 })
 
