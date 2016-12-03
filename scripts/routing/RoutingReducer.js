@@ -22,9 +22,9 @@ const routeReducer = function (state = initialRouteState, action) {
         {
           var updatedSequence = Object.assign({}, action.modifiedSequence, {command: action.change});
         }
-      else if (action.field == 'data')
+      else if (action.field == 'cmdData')
         {
-          var updatedSequence = Object.assign({}, action.modifiedSequence, {data: action.change});
+          var updatedSequence = Object.assign({}, action.modifiedSequence, {cmdData: action.change});
         };
       //$splice: replace one item in sequences at action.index
       return update(state, {
@@ -67,7 +67,7 @@ const routeReducer = function (state = initialRouteState, action) {
       if (!isFinite(highest)) {
         highest=0
       }
-      const newSequence = { sequence: highest+=1, data:"", command:"" }
+      const newSequence = { sequence: highest+=1, cmdData:"", command:"" }
       return update(state, {
         sequences: {
           $push: [newSequence]

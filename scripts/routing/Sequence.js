@@ -15,6 +15,7 @@ class renderDropdownList extends Component {
 
     //console.log('Dropdown')
     //console.log(input)
+    console.log(data)
 
   return (
     <div>
@@ -34,17 +35,17 @@ class renderMultiselect extends Component {
   
     //test if data is already an array
     //TODO cleaner data-values from api
-    if ( typeof input.value.data === 'string' ) {
-      var value = [input.value.data]
+    if ( typeof input.value.cmdData === 'string' ) {
+      var value = [input.value.cmdData]
     } else {
-      var value = input.value.data
+      var value = input.value.cmdData
     }
 
 		return (
 			<div>
 				<Multiselect 
 					value = { value || [] } 
-          onChange = { value => { changeHandler('routingForm',input.name+'.data',value); handleModifySequence(index, value, input.value, 'data'); } }
+          onChange = { value => { console.log('bli',value); changeHandler('routingForm',input.name+'.cmdData',value); handleModifySequence(index, value, input.value, 'cmdData'); } }
 					data = { data }
 					placeholder = 'User/Extension'
 				/>
@@ -53,26 +54,35 @@ class renderMultiselect extends Component {
 	}
 }
 
+
+class renderField extends Component {
+	render() {
+		console.log(this.props)
+		return(
+		  <div>
+		    <label>{this.props.placeholder}</label>
+		    <div>
+		      <input {...this.props}/>
+		      {this.props.touched && this.props.error && <span>{this.props.error}</span>}
+		    </div>
+		  </div>
+		)
+	}
+}
+
 class renderInput extends Component {
 	render() {
-		const { input, handleModifySequence, blurHandler, index } = this.props
+		const { input, handleModifySequence, changeHandler, blurHandler, index } = this.props
 
-    if ( typeof input.value.data === 'string' ) {
-      var bla = input.value.data
-    }
-
-    console.log(bla)
+    console.log('bla',input.name)
 
 		return (
 			<div>
-				<Field
-          name = { input.name }
-					value = { bla || '' } 
-          onBlur = { value => { blurHandler('routingForm',input.name+'.data',value); handleModifySequence(index, value, input.value, 'data'); } }
-          component = 'input'
-          type = 'text'
-          placeholder = 'test'
-				/>
+          <input 
+          type="text" 
+          value={ input.value.cmdData }
+          onBlur = { value => { console.log('blo',input.value.cmdData); blurHandler('routingForm', input.name+'.cmdData', input.value.cmdData)}}
+          />
 			</div>
 		)
 	}
@@ -239,24 +249,24 @@ class Sequence extends Component {
             index = { index }
           />}
 
-          {/*{sequenceFormArray.command != "bridge" &&           
+          {sequenceFormArray.command != "bridge" &&           
             <Field
               name={`${sequenceField}`}
               component={renderInput}
 					  	handleModifySequence = { handleModifySequence }
               blurHandler = { blurHandler }
+              changeHandler = { changeHandler }
               index = { index }
             />
-          */}
+          }
 
 
           { sequenceFormArray.command != "bridge" && 
             <div className="rw-widget rw-multiselect">
               <Field
                 name={`${sequenceField}.id`}
-                component="input"
+                component={renderField}
                 type="text"
-                value={`${sequenceField}.value`}
               />
             </div> }
 
