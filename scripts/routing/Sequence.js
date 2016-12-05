@@ -55,6 +55,35 @@ class renderMultiselect extends Component {
 }
 
 
+/*TODO merge renderMultiselect and renderInput*/
+
+class renderInput extends Component {
+	render() {
+		const { input, field, handleModifySequence, changeHandler, blurHandler, index } = this.props
+
+		return (
+			<div>
+          <input 
+          type="text" 
+          value={ input.value.cmdData }
+          onChange = { 
+            event => {
+              changeHandler('routingForm', input.name+'.cmdData', event.target.value) 
+            }
+          }
+          onBlur = { 
+            event => {
+              blurHandler('routingForm', input.name+'.cmdData', event.target.value); 
+              handleModifySequence(index, event.target.value, input.value, 'cmdData') 
+            }
+          }
+          />
+      </div>
+		)
+	}
+}
+
+
 class renderField extends Component {
 	render() {
 		console.log(this.props)
@@ -66,24 +95,6 @@ class renderField extends Component {
 		      {this.props.touched && this.props.error && <span>{this.props.error}</span>}
 		    </div>
 		  </div>
-		)
-	}
-}
-
-class renderInput extends Component {
-	render() {
-		const { input, handleModifySequence, changeHandler, blurHandler, index } = this.props
-
-    console.log('bla',input.name)
-
-		return (
-			<div>
-          <input 
-          type="text" 
-          value={ input.value.cmdData }
-          onBlur = { value => { console.log('blo',input.value.cmdData); blurHandler('routingForm', input.name+'.cmdData', input.value.cmdData)}}
-          />
-			</div>
 		)
 	}
 }
@@ -259,17 +270,6 @@ class Sequence extends Component {
               index = { index }
             />
           }
-
-
-          { sequenceFormArray.command != "bridge" && 
-            <div className="rw-widget rw-multiselect">
-              <Field
-                name={`${sequenceField}.id`}
-                component={renderField}
-                type="text"
-              />
-            </div> }
-
             
         </div>
         <Close
