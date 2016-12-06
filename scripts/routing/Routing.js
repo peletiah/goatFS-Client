@@ -77,12 +77,6 @@ class Routing extends Component {
   }
 
   handleModifySequence(index, change, sequence, field) {
-    console.log('from motherfucker')
-    console.log('index',index)
-    console.log('sequence',sequence)
-    console.log('change',change)
-    console.log('field',field)
-    console.log('from motherfucker end')
     store.dispatch({
     type: 'ALTER_SEQUENCE',
     index: index,
