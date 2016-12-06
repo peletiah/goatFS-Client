@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import autobind from 'autobind-decorator'
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux'
 import { findDOMNode } from 'react-dom';
@@ -7,105 +6,6 @@ import ItemTypes from './ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
 import DropdownList from 'react-widgets/lib/DropdownList'
 import Multiselect from 'react-widgets/lib/Multiselect'
-
-
-class renderDropdownList extends Component {
-  render() {
-		const { input, data, handleModifySequence, changeHandler, index } = this.props
-
-    //console.log('Dropdown')
-    //console.log(input)
-    console.log(data)
-
-  return (
-    <div>
-      <DropdownList
-        value = { input.value.command }
-        data = { data }
-        onChange = { value => { changeHandler('routingForm',input.name+'.command',value); handleModifySequence(index, value, input.value, 'command'); } }
-      />
-    </div>
-  )
-  }
-}
-
-class renderMultiselect extends Component {
-	render() {
-		const { input, data, handleModifySequence, changeHandler, index } = this.props
-  
-    //test if data is already an array
-    //TODO cleaner data-values from api
-    if ( typeof input.value.cmdData === 'string' ) {
-      var value = [input.value.cmdData]
-    } else {
-      var value = input.value.cmdData
-    }
-
-		return (
-			<div>
-				<Multiselect 
-					value = { value || [] } 
-          onChange = { value => { console.log('bli',value); changeHandler('routingForm',input.name+'.cmdData',value); handleModifySequence(index, value, input.value, 'cmdData'); } }
-					data = { data }
-					placeholder = 'User/Extension'
-				/>
-			</div>
-		)
-	}
-}
-
-
-/*TODO merge renderMultiselect and renderInput*/
-
-class renderInput extends Component {
-	render() {
-		const { input, field, handleModifySequence, changeHandler, blurHandler, index } = this.props
-
-		return (
-			<div>
-          <input 
-          type="text" 
-          value={ input.value.cmdData }
-          onChange = { 
-            event => {
-              changeHandler('routingForm', input.name+'.cmdData', event.target.value) 
-            }
-          }
-          onBlur = { 
-            event => {
-              blurHandler('routingForm', input.name+'.cmdData', event.target.value); 
-              handleModifySequence(index, event.target.value, input.value, 'cmdData') 
-            }
-          }
-          />
-      </div>
-		)
-	}
-}
-
-
-class renderField extends Component {
-	render() {
-		console.log(this.props)
-		return(
-		  <div>
-		    <label>{this.props.placeholder}</label>
-		    <div>
-		      <input {...this.props}/>
-		      {this.props.touched && this.props.error && <span>{this.props.error}</span>}
-		    </div>
-		  </div>
-		)
-	}
-}
-
-
-const renderOrder = field => (
-  <span className="sequence-order">
-    {field.input.value}
-  </span>
-)
-
 
 const sequenceSource = {
   beginDrag(props) {
@@ -115,14 +15,6 @@ const sequenceSource = {
     };
   }
 }
-
-
-const Close = ({index, handleRemoveSequence }) => (
-        <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
-          <span aria-hidden="true">&times;</span>
-        </button>
-)
-
 
 
 const sequenceTarget = {
@@ -187,6 +79,87 @@ function collectDropTarget(connect, monitor) {
   }
 }
 
+const renderOrder = field => (
+  <span className="sequence-order">
+    {field.input.value}
+  </span>
+)
+
+class renderSequenceForm extends Component {
+  render() {
+    const { formType, input, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
+
+    if (formType == 'DropDownList') {
+      return (
+				<div className="action">
+      		<DropdownList
+      		  value = { input.value.command }
+      		  data = { data }
+      		  onChange = { 
+							event => { 
+								changeHandler('routingForm', input.name+'.command', event); 
+								handleModifySequence(index, value, input.value, 'command'); 
+							} 
+						}
+      		/>
+    		</div>
+      )
+    }
+
+    else if (formType == 'Input') {
+			return (
+				<div className="action rw-widget">
+      		<input 
+      			type="text" 
+      			value={ input.value.cmdData }
+      			onChange = { 
+							event => {
+      			    changeHandler('routingForm', input.name+'.cmdData', event.target.value);
+      			  }
+      			}
+      			onBlur = { 
+      			  event => {
+      			    blurHandler('routingForm', input.name+'.cmdData', event.target.value); 
+      			    handleModifySequence(index, event.target.value, input.value, 'cmdData'); 
+      			  }
+      			}
+      		/>
+      	</div>
+			)
+		}
+
+    else if (formType == 'Multiselect') {
+      return (
+  			<div className="action">
+				  <Multiselect 
+				  	value = { ( typeof input.value.cmdData === 'string') ? [input.value.cmdData] : input.value.cmdData || [] } 
+            onChange = { 
+							event => { 
+								changeHandler('routingForm', input.name+'.cmdData', event); 
+								handleModifySequence(index, event, input.value, 'cmdData'); 
+							} 
+						}
+				  	data = { data }
+				  />
+			  </div>
+      )
+		}
+		else {
+			return (
+				<div>
+					Error: No FormType defined
+				</div>
+			)
+		}
+  }
+}
+
+const Close = ({index, handleRemoveSequence }) => (
+        <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
+          <span aria-hidden="true">&times;</span>
+        </button>
+)
+
 @DropTarget(ItemTypes.SEQUENCE, sequenceTarget,collectDropTarget)
 @DragSource(ItemTypes.SEQUENCE, sequenceSource, collectDragSource)
 class Sequence extends Component {
@@ -221,57 +194,62 @@ class Sequence extends Component {
         'playback'
       ]
 
+    var users = [
+      'John - 200',
+      'Anna - 300',
+      'Rüdiger - 357',
+      'Brumsti - 345'
+    ]
 
-    return connectDragSource(connectDropTarget(
-      <div className="sequence" 
-           style={{ 
+    return connectDragSource( connectDropTarget (
+      <div 
+        className="sequence" 
+        style={{ 
              opacity: isDraggingTarget ? 0.4 : 1,
              border: isDraggingTarget ? '1px #444 dashed' : 'None',
              cursor: 'move'
-           }}>
+        }}>
+
         <Field
           name={`${sequenceField}.sequence`}
           type="text"
-          component={renderOrder} />
+          component={renderOrder}
+        />
 
-        <div className="action">
           <Field
+						formType = 'DropDownList'
             name={`${sequenceField}`}
-            value={`${sequenceField}.command`}
-            component={renderDropdownList}
-            data = {commands}
-            defaultValue={'log'}
+            component={renderSequenceForm}
+            data = { commands }
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
           />
-        </div>
         
-        <div className="action">
+          {sequenceFormArray.command != "bridge" &&           
+            <Field
+							formType = 'Input'
+              name={`${sequenceField}`}
+              component={renderSequenceForm}
+              data = { sequenceFormArray.cmdData }
+					  	handleModifySequence = { handleModifySequence }
+              changeHandler = { changeHandler }
+              blurHandler = { blurHandler }
+              index = { index }
+            />
+          }
 
           {sequenceFormArray.command == "bridge" &&           
           <Field
+						formType = 'Multiselect'
             name={`${sequenceField}`}
-            component={renderMultiselect}
-            data={['John - 200','Anna - 300','Rüdiger - 357','Brumsti - 345','asdf - 654','ghj - 565','giogjoisfjgs - 5463456345','htrhtrhererhtrhtr - 5464545645645','fgfdgfdgdgsdfgsdf - 534534534534']}
-            defaultValue={['John - 200']}
+            component={renderSequenceForm}
+            data= { users } 
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
           />}
 
-          {sequenceFormArray.command != "bridge" &&           
-            <Field
-              name={`${sequenceField}`}
-              component={renderInput}
-					  	handleModifySequence = { handleModifySequence }
-              blurHandler = { blurHandler }
-              changeHandler = { changeHandler }
-              index = { index }
-            />
-          }
-            
-        </div>
         <Close
           index = { index }
           handleRemoveSequence = { handleRemoveSequence }

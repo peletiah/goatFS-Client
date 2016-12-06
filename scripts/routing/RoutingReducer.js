@@ -14,19 +14,17 @@ const routeReducer = function (state = initialRouteState, action) {
       return Object.assign({}, state, { id: action.route.id, sequences: action.route.sequences });
 
     case 'ALTER_SEQUENCE':
-      /*  
-      */
-
-      console.log('AAAAAAAAAAAAAAAAAAAAAHHHHHHHHHH!')
+      // A Sequence has been modified
+      var updatedSequence
       if (action.field == 'command')
         {
-          var updatedSequence = Object.assign({}, action.modifiedSequence, {command: action.change});
+          updatedSequence = Object.assign({}, action.modifiedSequence, {command: action.change});
         }
       else if (action.field == 'cmdData')
         {
-          var updatedSequence = Object.assign({}, action.modifiedSequence, {cmdData: action.change});
+          updatedSequence = Object.assign({}, action.modifiedSequence, {cmdData: action.change});
         };
-      //$splice: replace one item in sequences at action.index
+      //$splice: replace one item in state.sequences at action.index
       return update(state, {
         sequences: {
           $splice: 
@@ -35,10 +33,9 @@ const routeReducer = function (state = initialRouteState, action) {
       });
 
     case 'MOVE_SEQUENCE':
+      // A sequence has been moved to a different position
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
-      // a sequence has been moved to a different position
-      // update the route state
       return update(state, 
         { sequences:
           {
