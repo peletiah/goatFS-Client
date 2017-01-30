@@ -98,7 +98,7 @@ class renderSequenceForm extends Component {
       		  onChange = { 
 							event => { 
 								changeHandler('routingForm', input.name+'.command', event); 
-								handleModifySequence(index, value, input.value, 'command'); 
+								handleModifySequence(index, event, input.value, 'command'); 
 							} 
 						}
       		/>
