@@ -154,6 +154,30 @@ class renderSequenceForm extends Component {
   }
 }
 
+
+class renderDropdownList extends Component {
+	render()  {
+    const { formType, defaultValue, input, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
+		console.log( 'data', data )
+		console.log( 'defaultValue', defaultValue )
+		return (
+			<div className="action">
+				<Multiselect
+					textField = 'name'
+					valueField = 'id'
+					data = {data}
+					defaultValue = { [] }
+					onChange = {
+						event => {
+							console.log(input.name, event)
+						}
+					}
+				/>
+			</div>
+		)
+	}
+};
+
 const Close = ({index, handleRemoveSequence }) => (
         <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
           <span aria-hidden="true">&times;</span>
@@ -195,11 +219,18 @@ class Sequence extends Component {
       ]
 
     var users = [
-      'John - 200',
-      'Anna - 300',
-      'Rüdiger - 357',
-      'Brumsti - 345'
+      {id:"1",name:"John",extension:"200"},
+      {id:"2",name:"Rüdiger", extension:"357"},
+      {id:"3",name:"Brumsti",extension:"345"},
+      {id:"4",name:"Anna",extension:"300"}
     ]
+
+		var colors = [
+		  { id: 0, name: 'orange'},
+		  { id: 1, name: 'purple'},
+		  { id: 2, name: 'red' },
+		  { id: 3, name: 'blue' },
+		];
 
     return connectDragSource( connectDropTarget (
       <div 
@@ -244,11 +275,29 @@ class Sequence extends Component {
 						formType = 'Multiselect'
             name={`${sequenceField}`}
             component={renderSequenceForm}
-            data= { users } 
+            data= { users }
+            valueField = 'id'
+            textField = 'name'
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
           />}
+
+			<Field
+          name="favoriteColor"
+          component={renderDropdownList}
+          valueField="id"
+          textField="extension"
+          data={users}
+					defaultValue = {[users[1],users[3]]}
+			/>
+{/*
+				<Multiselect
+      		valueField='id' 
+					textField='name'
+      		data={colors}
+				/>
+*/}
 
         <Close
           index = { index }
