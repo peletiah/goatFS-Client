@@ -166,7 +166,7 @@ class renderDropdownList extends Component {
 					textField = 'name'
 					valueField = 'id'
 					data = {data}
-					defaultValue = { [] }
+					defaultValue = { defaultValue }
 					onChange = {
 						event => {
 							console.log(input.name, event)
@@ -283,21 +283,14 @@ class Sequence extends Component {
             index = { index }
           />}
 
-			<Field
-          name="favoriteColor"
-          component={renderDropdownList}
-          valueField="id"
-          textField="extension"
-          data={users}
-					defaultValue = {[users[1],users[3]]}
-			/>
-{/*
-				<Multiselect
-      		valueField='id' 
-					textField='name'
-      		data={colors}
-				/>
-*/}
+          <Field
+            name="favoriteColor"
+            component={renderDropdownList}
+            valueField="id"
+            textField="extension"
+            data={users}
+					  defaultValue = {[users[1],users[3]]}
+			    />
 
         <Close
           index = { index }
