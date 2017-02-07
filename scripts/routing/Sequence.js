@@ -86,8 +86,9 @@ const renderOrder = field => (
 )
 
 class renderSequenceForm extends Component {
+
   render() {
-    const { formType, input, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
+    const { formType, input, defaultValue, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
 
     if (formType == 'DropDownList') {
       return (
@@ -131,15 +132,17 @@ class renderSequenceForm extends Component {
     else if (formType == 'Multiselect') {
       return (
   			<div className="action">
-				  <Multiselect 
-				  	value = { ( typeof input.value.cmdData === 'string') ? [input.value.cmdData] : input.value.cmdData || [] } 
+				  <Multiselect
+            textField = 'name'
+            valueField = 'id'
+            data = { data }
+            defaultValue = { defaultValue }
             onChange = { 
 							event => { 
 								changeHandler('routingForm', input.name+'.cmdData', event); 
 								handleModifySequence(index, event, input.value, 'cmdData'); 
 							} 
 						}
-				  	data = { data }
 				  />
 			  </div>
       )
@@ -154,29 +157,6 @@ class renderSequenceForm extends Component {
   }
 }
 
-
-class renderDropdownList extends Component {
-	render()  {
-    const { formType, defaultValue, input, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
-		console.log( 'data', data )
-		console.log( 'defaultValue', defaultValue )
-		return (
-			<div className="action">
-				<Multiselect
-					textField = 'name'
-					valueField = 'id'
-					data = {data}
-					defaultValue = { defaultValue }
-					onChange = {
-						event => {
-							console.log(input.name, event)
-						}
-					}
-				/>
-			</div>
-		)
-	}
-};
 
 const Close = ({index, handleRemoveSequence }) => (
         <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
@@ -225,13 +205,6 @@ class Sequence extends Component {
       {id:"4",name:"Anna",extension:"300"}
     ]
 
-		var colors = [
-		  { id: 0, name: 'orange'},
-		  { id: 1, name: 'purple'},
-		  { id: 2, name: 'red' },
-		  { id: 3, name: 'blue' },
-		];
-
     return connectDragSource( connectDropTarget (
       <div 
         className="sequence" 
@@ -275,22 +248,12 @@ class Sequence extends Component {
 						formType = 'Multiselect'
             name={`${sequenceField}`}
             component={renderSequenceForm}
-            data= { users }
-            valueField = 'id'
-            textField = 'name'
+            data = { users }
+            defaultValue = { sequenceFormArray.users }
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
           />}
-
-          <Field
-            name="favoriteColor"
-            component={renderDropdownList}
-            valueField="id"
-            textField="extension"
-            data={users}
-					  defaultValue = {[users[1],users[3]]}
-			    />
 
         <Close
           index = { index }
