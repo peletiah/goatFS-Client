@@ -133,7 +133,7 @@ class renderSequenceForm extends Component {
       return (
   			<div className="action">
 				  <Multiselect
-            textField = 'name'
+            textField = 'target'
             valueField = 'id'
             data = { data }
             defaultValue = { defaultValue }
@@ -199,10 +199,10 @@ class Sequence extends Component {
       ]
 
     var users = [
-      {id:"1",name:"John",extension:"200"},
-      {id:"2",name:"Rüdiger", extension:"357"},
-      {id:"3",name:"Brumsti",extension:"345"},
-      {id:"4",name:"Anna",extension:"300"}
+      {id:"1",target:"John",extension:"200"},
+      {id:"2",target:"Rüdiger", extension:"357"},
+      {id:"3",target:"Brumsti",extension:"345"},
+      {id:"4",target:"Anna",extension:"300"}
     ]
 
     return connectDragSource( connectDropTarget (
@@ -249,7 +249,7 @@ class Sequence extends Component {
             name={`${sequenceField}`}
             component={renderSequenceForm}
             data = { users }
-            defaultValue = { sequenceFormArray.users }
+            defaultValue = { sequenceFormArray.cmdData }
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
