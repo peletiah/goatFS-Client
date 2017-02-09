@@ -34,8 +34,6 @@
     "re-base": "1.5.1",
     "react": "^15.2.1",
     "react-addons-css-transition-group": "^15.0.0",
-    "react-anything-sortable": "1.5.0",
-    "react-autocomplete": "^1.0.1",
     "react-catalyst": "0.3.0",
     "react-cookie": "0.4.7",
     "react-dom": "^15.0.0",

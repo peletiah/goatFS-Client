@@ -85,10 +85,60 @@ const renderOrder = field => (
   </span>
 )
 
-class renderSequenceForm extends Component {
 
+var targetSortList = React.createClass({
+  render() {
+    console.log(this.props)
+    const item = this.props.item
+    var typeIcon;
+    var sectionName;
+
+
+    if (item == "user") {
+        typeIcon = <i className='fa fa-male'></i>
+        sectionName = <span>User Directory</span>
+      } else if ( item == 'endpoint' ) {
+        typeIcon = <i className='fa fa-sign-out'></i>
+        sectionName = <span>External Number</span>
+      } else if ( item == 'extension' ) {
+        typeIcon = <i className='fa fa-arrow-right'></i>
+        sectionName = <span>Generic Extension</span>
+      };
+
+    return (
+      <span>
+      {typeIcon} {sectionName}
+      </span>
+    );
+
+  }
+})
+
+var TagItem = React.createClass({
+  render() {
+    var target = this.props.item
+    console.log(target)
+    var typeIcon;
+    if (target.type == "user") {
+        typeIcon = <i className='fa fa-male'></i>
+      } else if ( target.type == 'endpoint' ) {
+        typeIcon = <i className='fa fa-sign-out'></i>
+      } else if ( target.type == 'extension' ) {
+        typeIcon = <i className='fa fa-arrow-right'></i>
+      };
+
+    return (
+      <span className = 'Select-value-label'>
+        { typeIcon} {target.target }
+      </span>);
+  }
+})
+
+class renderSequenceForm extends Component {
   render() {
     const { formType, input, defaultValue, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
+
+    console.log(data)
 
     if (formType == 'DropDownList') {
       return (
@@ -137,6 +187,10 @@ class renderSequenceForm extends Component {
             valueField = 'id'
             data = { data }
             defaultValue = { defaultValue }
+						tagComponent = { TagItem }
+						itemComponent = { TagItem }
+            groupBy = 'type'
+            groupComponent = { targetSortList }
             onChange = { 
 							event => { 
 								changeHandler('routingForm', input.name+'.cmdData', event); 
@@ -199,10 +253,10 @@ class Sequence extends Component {
       ]
 
     var users = [
-      {id:"1",target:"John",extension:"200"},
-      {id:"2",target:"Rüdiger", extension:"357"},
-      {id:"3",target:"Brumsti",extension:"345"},
-      {id:"4",target:"Anna",extension:"300"}
+      {id:"1", type:"extension", target:"John",extension:"200"},
+      {id:"2", type:"extension", target:"Rüdiger", extension:"357"},
+      {id:"3", type:"user", target: "Brumsti",extension:"345"},
+      {id:"4", type:"endpoint", target: "Anna",extension:"300"}
     ]
 
     return connectDragSource( connectDropTarget (
