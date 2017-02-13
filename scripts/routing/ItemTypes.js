@@ -1,3 +1,6 @@
 export default {
-  SEQUENCE: 'sequence'
+  SEQUENCE: 'sequence',
+  USER_DIRECTORY: 'People',
+  EXTENSION: 'Generic Extensions',
+  EXTERNAL_NUMBER: 'External Numbers',
 };

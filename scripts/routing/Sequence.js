@@ -88,7 +88,6 @@ const renderOrder = field => (
 
 var targetSortList = React.createClass({
   render() {
-    console.log(this.props)
     const item = this.props.item
     var typeIcon;
     var sectionName;
@@ -96,13 +95,13 @@ var targetSortList = React.createClass({
 
     if (item == "user") {
         typeIcon = <i className='fa fa-male'></i>
-        sectionName = <span>User Directory</span>
+        sectionName = <span>{ ItemTypes.USER_DIRECTORY }</span>
       } else if ( item == 'endpoint' ) {
         typeIcon = <i className='fa fa-sign-out'></i>
-        sectionName = <span>External Number</span>
+        sectionName = <span>{ ItemTypes.EXTERNAL_NUMBER }</span>
       } else if ( item == 'extension' ) {
         typeIcon = <i className='fa fa-arrow-right'></i>
-        sectionName = <span>Generic Extension</span>
+        sectionName = <span>{ ItemTypes.EXTENSION }</span>
       };
 
     return (
@@ -117,7 +116,6 @@ var targetSortList = React.createClass({
 var TagItem = React.createClass({
   render() {
     var target = this.props.item
-    console.log(target)
     var typeIcon;
     if (target.type == "user") {
         typeIcon = <i className='fa fa-male'></i>
@@ -137,8 +135,6 @@ var TagItem = React.createClass({
 class renderSequenceForm extends Component {
   render() {
     const { formType, input, defaultValue, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
-
-    console.log(data)
 
     if (formType == 'DropDownList') {
       return (
