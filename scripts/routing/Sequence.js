@@ -5,6 +5,7 @@ import { findDOMNode } from 'react-dom';
 import ItemTypes from './ItemTypes';
 import { DragSource, DropTarget } from 'react-dnd';
 import DropdownList from 'react-widgets/lib/DropdownList'
+import Combobox from 'react-widgets/lib/Combobox'
 import Multiselect from 'react-widgets/lib/Multiselect'
 
 const sequenceSource = {
@@ -79,7 +80,7 @@ function collectDropTarget(connect, monitor) {
   }
 }
 
-const renderOrder = field => (
+const renderSequenceOrder = field => (
   <span className="sequence-order">
     {field.input.value}
   </span>
@@ -136,12 +137,15 @@ class renderSequenceForm extends Component {
   render() {
     const { formType, input, defaultValue, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
 
-    if (formType == 'DropDownList') {
+    if (formType == 'Combobox') {
       return (
 				<div className="action">
-      		<DropdownList
+      		<Combobox
       		  value = { input.value.command }
+            textField = 'command'
+            valueField = 'id'
       		  data = { data }
+            suggest = { true } 
       		  onChange = { 
 							event => { 
 								changeHandler('routingForm', input.name+'.command', event); 
@@ -159,6 +163,7 @@ class renderSequenceForm extends Component {
       		<input 
       			type="text" 
       			value={ input.value.cmdData }
+            placeholder = { input.value.command.data_template } 
       			onChange = { 
 							event => {
       			    changeHandler('routingForm', input.name+'.cmdData', event.target.value);
@@ -182,7 +187,8 @@ class renderSequenceForm extends Component {
             textField = 'target'
             valueField = 'id'
             data = { data }
-            defaultValue = { defaultValue }
+            defaultValue = { defaultValue || [] }
+            placeholder = { input.value.command.data_template } 
 						tagComponent = { TagItem }
 						itemComponent = { TagItem }
             groupBy = 'type'
@@ -238,22 +244,11 @@ class Sequence extends Component {
             connectDragSource,
             connectDropTarget,
             sequenceFormArray,
+            availableExtensions, 
+            applicationCatalog,
             changeHandler,
             blurHandler
           } = this.props
-
-    var commands = [
-        'set',
-        'bridge',
-        'playback'
-      ]
-
-    var users = [
-      {id:"1", type:"extension", target:"John",extension:"200"},
-      {id:"2", type:"extension", target:"Rüdiger", extension:"357"},
-      {id:"3", type:"user", target: "Brumsti",extension:"345"},
-      {id:"4", type:"endpoint", target: "Anna",extension:"300"}
-    ]
 
     return connectDragSource( connectDropTarget (
       <div 
@@ -267,20 +262,20 @@ class Sequence extends Component {
         <Field
           name={`${sequenceField}.sequence`}
           type="text"
-          component={renderOrder}
+          component={renderSequenceOrder}
         />
 
           <Field
-						formType = 'DropDownList'
+						formType = 'Combobox'
             name={`${sequenceField}`}
             component={renderSequenceForm}
-            data = { commands }
+            data = { applicationCatalog }
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }
             index = { index }
           />
         
-          {sequenceFormArray.command != "bridge" &&           
+          {sequenceFormArray.command.command != "bridge" &&           
             <Field
 							formType = 'Input'
               name={`${sequenceField}`}
@@ -293,12 +288,12 @@ class Sequence extends Component {
             />
           }
 
-          {sequenceFormArray.command == "bridge" &&           
+          {sequenceFormArray.command.command == "bridge" &&           
           <Field
 						formType = 'Multiselect'
             name={`${sequenceField}`}
             component={renderSequenceForm}
-            data = { users }
+            data = { availableExtensions }
             defaultValue = { sequenceFormArray.cmdData }
 						handleModifySequence = { handleModifySequence }
             changeHandler = { changeHandler }

@@ -14,7 +14,18 @@ import Sequence from './Sequence'
 import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 
-const renderSequences = ({ fields, meta: { touched, error }, handleModifySequence, handleMoveSequence, handleRemoveSequence, sequenceFormArray, changeHandler, blurHandler }) => (
+const renderSequences = ({ 
+  fields, 
+  meta: { touched, error }, 
+  handleModifySequence, 
+  handleMoveSequence, 
+  handleRemoveSequence, 
+  sequenceFormArray, 
+  availableExtensions, 
+  applicationCatalog, 
+  changeHandler, 
+  blurHandler 
+}) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
           <Sequence key={ `${sequenceField}.sequence` } 
@@ -24,7 +35,9 @@ const renderSequences = ({ fields, meta: { touched, error }, handleModifySequenc
                 handleRemoveSequence  = { handleRemoveSequence }
                 sequenceFormArray     = { sequenceFormArray[index] }
                 changeHandler         = { changeHandler }
-                blurHandler         = { blurHandler }
+                blurHandler           = { blurHandler }
+                availableExtensions   = { availableExtensions }
+                applicationCatalog    = { applicationCatalog } 
                 className="sequence" 
                 sequenceField={ sequenceField } />
     )}
@@ -119,6 +132,7 @@ class Routing extends Component {
       headers: {
         'X-CSRF-TOKEN': csrfToken,
         'Accept': 'application/json',
+  changeHandler, 
         'Content-Type': 'application/json'
       },
       credentials: 'include',
@@ -137,7 +151,14 @@ class Routing extends Component {
 
  
   render() {
-    const { sequences, changeHandler, blurHandler, sequenceFormArray } = this.props
+    const { 
+      sequences, 
+      availableExtensions, 
+      applicationCatalog, 
+      changeHandler, 
+      blurHandler, 
+      sequenceFormArray 
+    } = this.props
 
 
     return (
@@ -151,12 +172,10 @@ class Routing extends Component {
             blurHandler = { blurHandler }
             handleRemoveSequence = { this.handleRemoveSequence }
             sequenceFormArray = { sequenceFormArray }
+            availableExtensions = { availableExtensions }
+            applicationCatalog = { applicationCatalog }
         />
         <button type="button" onClick={ this.handleSaveRoute }>Save</button>
-        {sequenceFormArray && sequenceFormArray[0] && <div>
-          <span>sequenceFormArray: {sequenceFormArray[0].command}</span>
-        </div>}
-
     </div>
     );
   }
@@ -170,21 +189,32 @@ Routing = reduxForm({
 
 const selector = formValueSelector("routingForm")
 
-Routing = connect(
-  state => ({
-    initialValues: {sequences:state.route.sequences},
-    sequenceFormArray: selector(state, "sequences"),
-  })
-)(Routing)
-
 const mapDispatchToProps = (dispatch) => ({
-    blurHandler: bindActionCreators(blur, dispatch),
-    changeHandler: bindActionCreators(change, dispatch)
-})
+      blurHandler: bindActionCreators(blur, dispatch),
+      changeHandler: bindActionCreators(change, dispatch)
+      })
 
 const mapStateToProps = function(store) {
+  console.log('mapStateToProps', store)
   // maps store.route to this.props
   return store.route
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Routing);
+
+Routing = connect(
+  state => {
+    console.log("selector", selector(state, "sequences"));
+  return {
+    initialValues: {
+      sequences: state.route.sequences,
+      availableExtensions: state.route.availableExtensions,
+      applicationCatalog: state.route.applicationCatalog
+    },
+    sequenceFormArray: selector(state, "sequences"),
+  }
+  }
+)(Routing)
+
+Routing = connect(mapStateToProps, mapDispatchToProps)(Routing)
+
+export default Routing;

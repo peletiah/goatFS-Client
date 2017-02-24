@@ -1,4 +1,4 @@
-import update from 'react/lib/update';
+import update from 'immutability-helper';
 
 const initialRouteState = {
   id: 0,
@@ -11,7 +11,12 @@ const routeReducer = function (state = initialRouteState, action) {
 
   switch (action.type) {
     case 'FETCH_ROUTES_SUCCESS':
-      return Object.assign({}, state, { id: action.route.id, sequences: action.route.sequences });
+      return Object.assign({}, state, { 
+        id: action.route.id, 
+        sequences: action.route.sequences, 
+        availableExtensions: action.route.availableExtensions, 
+        applicationCatalog: action.route.applicationCatalog 
+      });
 
     case 'ALTER_SEQUENCE':
       // A Sequence has been modified
@@ -52,7 +57,7 @@ const routeReducer = function (state = initialRouteState, action) {
       const newSequences = []
       // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
       state.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
-      return {id: state.id, sequences: newSequences}
+      return update( state, { sequences: {$set: newSequences} } );
 
     case 'ADD_SEQUENCE':
       // put sequence-numbers in an array and find the 
@@ -64,7 +69,8 @@ const routeReducer = function (state = initialRouteState, action) {
       if (!isFinite(highest)) {
         highest=0
       }
-      const newSequence = { sequence: highest+=1, cmdData:"", command:"" }
+      const newSequence = { sequence: highest+=1, cmdData:"", command: { id:0, command: "bridge", data_template: ""} }
+      console.log("Adding Sequence to state (Reducer)")
       return update(state, {
         sequences: {
           $push: [newSequence]
