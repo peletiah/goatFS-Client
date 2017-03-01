@@ -231,7 +231,6 @@ class Sequence extends Component {
     sequenceField: PropTypes.any.isRequired,
     handleMoveSequence: PropTypes.func.isRequired,
     handleRemoveSequence: PropTypes.func.isRequired,
-    sequenceFormArray: PropTypes.any.isRequired
   };
 
     render() {
@@ -275,7 +274,7 @@ class Sequence extends Component {
             index = { index }
           />
         
-          {sequenceFormArray.command.command != "bridge" &&           
+          {sequenceFormArray && sequenceFormArray.command.command != "bridge" &&           
             <Field
 							formType = 'Input'
               name={`${sequenceField}`}
@@ -288,7 +287,7 @@ class Sequence extends Component {
             />
           }
 
-          {sequenceFormArray.command.command == "bridge" &&           
+          {sequenceFormArray && sequenceFormArray.command.command == "bridge" &&           
           <Field
 						formType = 'Multiselect'
             name={`${sequenceField}`}

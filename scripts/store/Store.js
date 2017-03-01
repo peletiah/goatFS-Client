@@ -12,6 +12,8 @@ const reducers = combineReducers({
   appState: appReducer
 });
 
+console.log('reducers: ', reducers)
+
 const store = createStore(reducers, window.devToolsExtension && window.devToolsExtension());
 
 export default store;

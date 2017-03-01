@@ -3,7 +3,6 @@
 */
 
 import React, { Component } from 'react'
-import update from 'react/lib/update';
 import autobind from 'autobind-decorator';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
@@ -152,14 +151,12 @@ class Routing extends Component {
  
   render() {
     const { 
-      sequences, 
       availableExtensions, 
       applicationCatalog, 
       changeHandler, 
       blurHandler, 
-      sequenceFormArray 
+      sequenceFormArray
     } = this.props
-
 
     return (
       <div>
@@ -181,37 +178,39 @@ class Routing extends Component {
   }
 };
 
+
+const FORM_NAME = 'routingForm'
+
 Routing = reduxForm({
-    form: 'routingForm',
+    form: FORM_NAME,
     enableReinitialize: true
   }
 )(Routing)
 
-const selector = formValueSelector("routingForm")
+const selector = formValueSelector(FORM_NAME)
 
 const mapDispatchToProps = (dispatch) => ({
       blurHandler: bindActionCreators(blur, dispatch),
       changeHandler: bindActionCreators(change, dispatch)
       })
 
+// maps store.route to this.props
+// this gets "this.props" into Routing-component
 const mapStateToProps = function(store) {
-  console.log('mapStateToProps', store)
-  // maps store.route to this.props
   return store.route
 }
 
 
 Routing = connect(
   state => {
-    console.log("selector", selector(state, "sequences"));
-  return {
-    initialValues: {
-      sequences: state.route.sequences,
-      availableExtensions: state.route.availableExtensions,
-      applicationCatalog: state.route.applicationCatalog
-    },
-    sequenceFormArray: selector(state, "sequences"),
-  }
+    return {
+      sequenceFormArray: selector(state, "sequences"),
+      initialValues: {
+        sequences: state.route.sequences,
+        availableExtensions: state.route.availableExtensions,
+        applicationCatalog: state.route.applicationCatalog
+      }
+    }
   }
 )(Routing)
 

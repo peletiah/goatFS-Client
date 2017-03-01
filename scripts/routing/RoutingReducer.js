@@ -87,8 +87,6 @@ const routeReducer = function (state = initialRouteState, action) {
         }
       })
 
-
-
     default:
       return state;
   }
