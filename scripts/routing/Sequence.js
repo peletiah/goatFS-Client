@@ -135,7 +135,16 @@ var TagItem = React.createClass({
 
 class renderSequenceForm extends Component {
   render() {
-    const { formType, input, defaultValue, data, handleModifySequence, changeHandler, blurHandler, index } = this.props
+    const { formType, 
+            input, 
+            defaultValue, 
+            data, 
+            handleModifySequence, 
+            changeHandler, 
+            blurHandler,
+            handleAddTarget,
+            index 
+          } = this.props
 
     if (formType == 'Combobox') {
       return (
@@ -184,21 +193,25 @@ class renderSequenceForm extends Component {
       return (
   			<div className="action">
 				  <Multiselect
-            textField = 'target'
-            valueField = 'id'
-            data = { data }
-            defaultValue = { defaultValue || [] }
-            placeholder = { input.value.command.data_template } 
-						tagComponent = { TagItem }
-						itemComponent = { TagItem }
-            groupBy = 'type'
-            groupComponent = { targetSortList }
-            onChange = { 
-							event => { 
-								changeHandler('routingForm', input.name+'.cmdData', event); 
-								handleModifySequence(index, event, input.value, 'cmdData'); 
-							} 
-						}
+            textField       = 'target'
+            valueField      = 'id'
+            data            = { data }
+            defaultValue    = { defaultValue || [] }
+            placeholder     = { input.value.command.data_template } 
+						tagComponent    = { TagItem }
+						itemComponent   = { TagItem }
+            groupBy         = 'type'
+            groupComponent  = { targetSortList }
+            onCreate        = { new_target => {
+                                  handleAddTarget(index, new_target, input.value);
+                                }
+                              }
+            onChange        = { 
+							                  event => { 
+							                  	changeHandler('routingForm', input.name+'.cmdData', event); 
+							                  	handleModifySequence(index, event, input.value, 'cmdData'); 
+							                  } 
+						                  }
 				  />
 			  </div>
       )
@@ -231,12 +244,14 @@ class Sequence extends Component {
     sequenceField: PropTypes.any.isRequired,
     handleMoveSequence: PropTypes.func.isRequired,
     handleRemoveSequence: PropTypes.func.isRequired,
+    handleAddTarget: PropTypes.func.isRequired,
   };
 
     render() {
     const { sequenceField,
 						handleModifySequence,
             handleRemoveSequence,
+						handleAddTarget,
             index,
             isDragging,
             isDraggingTarget,
@@ -265,44 +280,47 @@ class Sequence extends Component {
         />
 
           <Field
-						formType = 'Combobox'
-            name={`${sequenceField}`}
-            component={renderSequenceForm}
-            data = { applicationCatalog }
+						formType             = 'Combobox'
+            name                 = { `${sequenceField}` }
+            component            = { renderSequenceForm }
+            data                 = { applicationCatalog }
 						handleModifySequence = { handleModifySequence }
-            changeHandler = { changeHandler }
-            index = { index }
+            changeHandler        = { changeHandler }
+            index                = { index }
           />
         
           {sequenceFormArray && sequenceFormArray.command.command != "bridge" &&           
             <Field
-							formType = 'Input'
-              name={`${sequenceField}`}
-              component={renderSequenceForm}
-              data = { sequenceFormArray.cmdData }
+							formType             = 'Input'
+              name                 = { `${sequenceField}` }
+              component            = { renderSequenceForm }
+              data                 = { sequenceFormArray.cmdData }
 					  	handleModifySequence = { handleModifySequence }
-              changeHandler = { changeHandler }
-              blurHandler = { blurHandler }
-              index = { index }
+              changeHandler        = { changeHandler }
+              blurHandler          = { blurHandler }
+              index                = { index }
             />
           }
 
           {sequenceFormArray && sequenceFormArray.command.command == "bridge" &&           
           <Field
-						formType = 'Multiselect'
-            name={`${sequenceField}`}
-            component={renderSequenceForm}
-            data = { availableExtensions }
-            defaultValue = { sequenceFormArray.cmdData }
+						formType             = 'Multiselect'
+            name                 = { `${sequenceField}` }
+            component            = { renderSequenceForm }
+            data                 = { availableExtensions }
+            defaultValue         = { sequenceFormArray.cmdData }
 						handleModifySequence = { handleModifySequence }
-            changeHandler = { changeHandler }
-            index = { index }
+            changeHandler        = { changeHandler }
+            handleAddTarget            = { handleAddTarget }
+            index                = { index }
           />}
 
         <Close
-          index = { index }
+          index                = { index }
           handleRemoveSequence = { handleRemoveSequence }
         />
+
+
       </div>
     ));
   }

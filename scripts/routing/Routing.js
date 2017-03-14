@@ -23,6 +23,7 @@ const renderSequences = ({
   availableExtensions, 
   applicationCatalog, 
   changeHandler, 
+  handleAddTarget,
   blurHandler 
 }) => (
   <div className="route">
@@ -34,6 +35,7 @@ const renderSequences = ({
                 handleRemoveSequence  = { handleRemoveSequence }
                 sequenceFormArray     = { sequenceFormArray[index] }
                 changeHandler         = { changeHandler }
+                handleAddTarget       = { handleAddTarget }
                 blurHandler           = { blurHandler }
                 availableExtensions   = { availableExtensions }
                 applicationCatalog    = { applicationCatalog } 
@@ -96,6 +98,7 @@ class Routing extends Component {
     change: change,
     field: field
     })
+    console.log('ALTER',change);
   }
 
 
@@ -131,7 +134,6 @@ class Routing extends Component {
       headers: {
         'X-CSRF-TOKEN': csrfToken,
         'Accept': 'application/json',
-  changeHandler, 
         'Content-Type': 'application/json'
       },
       credentials: 'include',
@@ -146,6 +148,16 @@ class Routing extends Component {
     )
   };
 
+  handleAddTarget(index, new_target, sequence) {
+    store.dispatch({
+    type: 'ADD_BRIDGE_TARGET',
+    index: index,
+    new_target: new_target,
+    sequence: sequence,
+    })
+    console.log('create Tag',new_target, sequence, index)
+  };
+
 
 
  
@@ -154,7 +166,7 @@ class Routing extends Component {
       availableExtensions, 
       applicationCatalog, 
       changeHandler, 
-      blurHandler, 
+      blurHandler,
       sequenceFormArray
     } = this.props
 
@@ -167,6 +179,7 @@ class Routing extends Component {
             handleMoveSequence = { this.handleMoveSequence }
             changeHandler = { changeHandler }
             blurHandler = { blurHandler }
+            handleAddTarget = { this.handleAddTarget }
             handleRemoveSequence = { this.handleRemoveSequence }
             sequenceFormArray = { sequenceFormArray }
             availableExtensions = { availableExtensions }

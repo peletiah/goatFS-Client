@@ -85,7 +85,22 @@ const routeReducer = function (state = initialRouteState, action) {
             [index, 1]
           ]
         }
-      })
+      });
+
+    case 'ADD_BRIDGE_TARGET':
+      // append new "endpoint"-target to "bridge"-sequence
+      action.sequence.cmdData.push({
+                            type:"endpoint", 
+                            id: -1, 
+                            target: action.new_target
+                          }); 
+      //$splice: replace one item in state.sequences at action.index
+      return update(state, {
+        sequences: {
+          $splice: 
+            [[action.index,1,action.sequence]]
+        }
+      });
 
     default:
       return state;

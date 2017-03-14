@@ -53,6 +53,9 @@
 }
 
 
+.close {
+  margin-right:15px;
+}
 
 /* TODO move to react-widget less-files*/
 
