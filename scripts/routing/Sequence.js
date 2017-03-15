@@ -97,13 +97,13 @@ var targetSortList = React.createClass({
     if (item == "user") {
         typeIcon = <i className='fa fa-male'></i>
         sectionName = <span>{ ItemTypes.USER_DIRECTORY }</span>
-      } else if ( item == 'endpoint' ) {
-        typeIcon = <i className='fa fa-sign-out'></i>
-        sectionName = <span>{ ItemTypes.EXTERNAL_NUMBER }</span>
-      } else if ( item == 'extension' ) {
-        typeIcon = <i className='fa fa-arrow-right'></i>
-        sectionName = <span>{ ItemTypes.EXTENSION }</span>
-      };
+    } else if ( item == 'endpoint' ) {
+      typeIcon = <i className='fa fa-sign-out'></i>
+      sectionName = <span>{ ItemTypes.EXTERNAL_NUMBER }</span>
+    } else if ( item == 'extension' ) {
+      typeIcon = <i className='fa fa-arrow-right'></i>
+      sectionName = <span>{ ItemTypes.EXTENSION }</span>
+    };
 
     return (
       <span>
@@ -120,11 +120,11 @@ var TagItem = React.createClass({
     var typeIcon;
     if (target.type == "user") {
         typeIcon = <i className='fa fa-male'></i>
-      } else if ( target.type == 'endpoint' ) {
-        typeIcon = <i className='fa fa-sign-out'></i>
-      } else if ( target.type == 'extension' ) {
-        typeIcon = <i className='fa fa-arrow-right'></i>
-      };
+    } else if ( target.type == 'endpoint' ) {
+      typeIcon = <i className='fa fa-sign-out'></i>
+    } else if ( target.type == 'extension' ) {
+      typeIcon = <i className='fa fa-arrow-right'></i>
+    };
 
     return (
       <span className = 'Select-value-label'>
@@ -202,16 +202,15 @@ class renderSequenceForm extends Component {
 						itemComponent   = { TagItem }
             groupBy         = 'type'
             groupComponent  = { targetSortList }
-            onCreate        = { new_target => {
-                                  handleAddTarget(index, new_target, input.value);
-                                }
-                              }
+            onCreate        = {(
+              new_target => handleAddTarget(index, new_target, input.value) 
+            )}
             onChange        = { 
-							                  event => { 
-							                  	changeHandler('routingForm', input.name+'.cmdData', event); 
-							                  	handleModifySequence(index, event, input.value, 'cmdData'); 
-							                  } 
-						                  }
+              event => { 
+              	changeHandler('routingForm', input.name+'.cmdData', event); 
+              	handleModifySequence(index, event, input.value, 'cmdData'); 
+              } 
+            }
 				  />
 			  </div>
       )

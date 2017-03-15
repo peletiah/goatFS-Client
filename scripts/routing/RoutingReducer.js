@@ -1,4 +1,5 @@
 import update from 'immutability-helper';
+import ItemTypes from './ItemTypes';
 
 const initialRouteState = {
   id: 0,
@@ -69,7 +70,7 @@ const routeReducer = function (state = initialRouteState, action) {
       if (!isFinite(highest)) {
         highest=0
       }
-      const newSequence = { sequence: highest+=1, cmdData:"", command: { id:0, command: "bridge", data_template: ""} }
+      const newSequence = { sequence: highest+=1, id: -1, timeout: ItemTypes.DEFAULT_TIMEOUT, cmdData:"", command: { id:0, command: "bridge", data_template: ""} }
       console.log("Adding Sequence to state (Reducer)")
       return update(state, {
         sequences: {
