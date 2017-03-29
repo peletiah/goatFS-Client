@@ -55,7 +55,7 @@ const sequenceTarget = {
     }
 
     // Time to actually perform the action
-    props.handleMoveSequence(dragIndex, hoverIndex);
+    props.moveSequence(dragIndex, hoverIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -139,10 +139,10 @@ class renderSequenceForm extends Component {
             input, 
             defaultValue, 
             data, 
-            handleModifySequence, 
+            alterSequence, 
             changeHandler, 
             blurHandler,
-            handleAddTarget,
+            addTarget,
             index 
           } = this.props
 
@@ -158,7 +158,7 @@ class renderSequenceForm extends Component {
       		  onChange = { 
 							event => { 
 								changeHandler('routingForm', input.name+'.command', event); 
-								handleModifySequence(index, event, input.value, 'command'); 
+								alterSequence(index, event, input.value, 'command'); 
 							} 
 						}
       		/>
@@ -181,7 +181,7 @@ class renderSequenceForm extends Component {
       			onBlur = { 
       			  event => {
       			    blurHandler('routingForm', input.name+'.cmdData', event.target.value); 
-      			    handleModifySequence(index, event.target.value, input.value, 'cmdData'); 
+      			    alterSequence(index, event.target.value, input.value, 'cmdData'); 
       			  }
       			}
       		/>
@@ -203,12 +203,12 @@ class renderSequenceForm extends Component {
             groupBy         = 'type'
             groupComponent  = { targetSortList }
             onCreate        = {(
-              new_target => handleAddTarget(index, new_target, input.value) 
+              new_target => addTarget(index, new_target, input.value) 
             )}
             onChange        = { 
               event => { 
               	changeHandler('routingForm', input.name+'.cmdData', event); 
-              	handleModifySequence(index, event, input.value, 'cmdData'); 
+              	alterSequence(index, event, input.value, 'cmdData'); 
               } 
             }
 				  />
@@ -226,8 +226,8 @@ class renderSequenceForm extends Component {
 }
 
 
-const Close = ({index, handleRemoveSequence }) => (
-        <button type="button" className="close" aria-label="Close" onClick={ handleRemoveSequence.bind(null, index) } >
+const Close = ({ removeSequence, index, sequenceId  }) => (
+        <button type="button" className="close" aria-label="Close" onClick={ removeSequence.bind(null, index, sequenceId) } >
           <span aria-hidden="true">&times;</span>
         </button>
 )
@@ -241,16 +241,16 @@ class Sequence extends Component {
     index: PropTypes.number.isRequired,
     isDragging: PropTypes.bool.isRequired,
     sequenceField: PropTypes.any.isRequired,
-    handleMoveSequence: PropTypes.func.isRequired,
-    handleRemoveSequence: PropTypes.func.isRequired,
-    handleAddTarget: PropTypes.func.isRequired,
+    moveSequence: PropTypes.func.isRequired,
+    removeSequence: PropTypes.func.isRequired,
+    addTarget: PropTypes.func.isRequired,
   };
 
     render() {
     const { sequenceField,
-						handleModifySequence,
-            handleRemoveSequence,
-						handleAddTarget,
+						alterSequence,
+            removeSequence,
+						addTarget,
             index,
             isDragging,
             isDraggingTarget,
@@ -283,7 +283,7 @@ class Sequence extends Component {
             name                 = { `${sequenceField}` }
             component            = { renderSequenceForm }
             data                 = { applicationCatalog }
-						handleModifySequence = { handleModifySequence }
+						alterSequence = { alterSequence }
             changeHandler        = { changeHandler }
             index                = { index }
           />
@@ -294,7 +294,7 @@ class Sequence extends Component {
               name                 = { `${sequenceField}` }
               component            = { renderSequenceForm }
               data                 = { sequenceFormArray.cmdData }
-					  	handleModifySequence = { handleModifySequence }
+					  	alterSequence = { alterSequence }
               changeHandler        = { changeHandler }
               blurHandler          = { blurHandler }
               index                = { index }
@@ -308,16 +308,20 @@ class Sequence extends Component {
             component            = { renderSequenceForm }
             data                 = { availableExtensions }
             defaultValue         = { sequenceFormArray.cmdData }
-						handleModifySequence = { handleModifySequence }
+						alterSequence = { alterSequence }
             changeHandler        = { changeHandler }
-            handleAddTarget            = { handleAddTarget }
+            addTarget            = { addTarget }
             index                = { index }
-          />}
+          />
+          }
 
+        {sequenceFormArray &&
         <Close
           index                = { index }
-          handleRemoveSequence = { handleRemoveSequence }
+          sequenceId           = { sequenceFormArray.sequence_id }
+          removeSequence = { removeSequence }
         />
+        }
 
 
       </div>
