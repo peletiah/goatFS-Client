@@ -60,17 +60,26 @@ class Routing extends Component {
   
   constructor(props) {
     super(props);
+    this.commitRoute = this.commitRoute.bind(this);
   }
 
 
   
   componentDidMount() {
     const routeId = 1
-    store.dispatch(fetchRoute(routeId))
+    const { dispatch } = this.props
+    dispatch(fetchRoute(routeId))
     this.props.initialize()
   };
 
 
+  commitRoute (e) {
+    e.preventDefault()
+    console.log('saving route through dispatch', e)
+    const routeId = 1
+    const { dispatch } = this.props
+    dispatch( saveRoute( routeId ))
+  }
  
   render() {
     const { 
@@ -97,13 +106,13 @@ class Routing extends Component {
               availableExtensions = { availableExtensions }
               applicationCatalog = { applicationCatalog }
           />
-          <button type="button" onClick={ saveRoute }>Save</button>
+          <button type="button" onClick={ this.commitRoute }>Save</button>
       </div>
       );
     }
     else
       {
-        return(<div></div>)
+        return(<div/>)
       }
   }
 };

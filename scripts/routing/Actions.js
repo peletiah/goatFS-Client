@@ -18,9 +18,8 @@ function inspectHttpStatus(response) {
 
 export function fetchRoute(routeId) {
   const csrfToken = store.getState().appState.csrfToken
-  console.log('wtf0')
   return function (dispatch) {
-    //dispatch(fetchRouteRequest(routeId))
+    dispatch(fetchRouteRequest(routeId))
     return fetch(`http://api.goatfs.org:6543/route/${routeId}`, {
                 credentials: 'include',
                 headers: {
@@ -33,27 +32,26 @@ export function fetchRoute(routeId) {
             )
       .then( response => inspectHttpStatus(response) )
       .then( response => response.json() )
-      .then( json => dispatch(fetchRouteSuccess(routeId, json) )
-      )
+      .then( json => dispatch(fetchRouteSuccess(routeId, json) ))
   }
 }
 
 export const FETCH_ROUTE_REQUEST = 'FETCH_ROUTE_REQUEST'
 
 export function fetchRouteRequest ( routeId ) {
-  store.dispatch({
+  return {
     type: FETCH_ROUTE_REQUEST,
     routeId: routeId
-  })
+  }
 }
 
 export const FETCH_ROUTE_SUCCESS = 'FETCH_ROUTE_SUCCESS'
 
-export function fetchRouteSuccess( routeId, json ) {
-  store.dispatch({
+function fetchRouteSuccess( routeId, json ) {
+  return {
     type: FETCH_ROUTE_SUCCESS,
     route: json
-  })
+  }
 }
 
 export const ADD_SEQUENCE = 'ADD_SEQUENCE'
@@ -125,35 +123,57 @@ export function addTarget(index, new_target, sequence) {
   console.log('create Tag',new_target, sequence, index)
 };
 
+//export function fetchRoute(routeId) {
+//  const csrfToken = store.getState().appState.csrfToken
+//  return function (dispatch) {
+//    dispatch(fetchRouteRequest(routeId))
+//    return fetch(`http://api.goatfs.org:6543/route/${routeId}`, {
+//                credentials: 'include',
+//                headers: {
+//                  'Accept': 'application/json',
+//                  'Content-Type': 'application/json',
+//                  'Access-Control-Allow-Origin': 'goatfs.org',
+//                  'X-CSRF-TOKEN': csrfToken
+//                }
+//              }
+//            )
+//      .then( response => inspectHttpStatus(response) )
+//      .then( response => response.json() )
+//      .then( json => dispatch(fetchRouteSuccess(routeId, json) ))
+//  }
+//}
+
 
 export const SAVE_ROUTE = 'SAVE_ROUTE'
 
-export function saveRoute() {
+export function saveRoute(routeId) {
+  //TODO limit getState() by routeId
   const route = store.getState().route
   const csrfToken = store.getState().appState.csrfToken
-  fetch('http://api.goatfs.org:6543/route/1', {
-    method: 'PUT',
-    headers: {
-      'X-CSRF-TOKEN': csrfToken,
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify (
-      route
-    )
-  })
-  .then( response => response.json() )
-  .then(
-    //TODO alter state according to response and remove deleted objects from deletedSequences
-    data => {
-      console.log('asdf')
-      console.log(data)
-      store.dispatch({
-        type: 'UPDATE_ROUTE',
-        route: data
-      })
-    }
-  )
-};
+  return function (dispatch) {
+    return fetch(`http://api.goatfs.org:6543/route/${routeId}`, {
+                method: 'PUT',
+                headers: {
+                  'X-CSRF-TOKEN': csrfToken,
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify (
+                  route
+                )
+              }
+            )
+      .then( response => inspectHttpStatus(response) )
+      .then( dispatch(saveRouteSuccess( routeId ) ))
+      .then( dispatch(fetchRoute( routeId )))
+  }
+}
 
+export const SAVE_ROUTE_SUCCESS = 'SAVE_ROUTE_SUCCESS'
+
+function saveRouteSuccess( routeId ) {
+  return {
+    type: SAVE_ROUTE_SUCCESS
+  }
+}

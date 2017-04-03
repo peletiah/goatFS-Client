@@ -9,7 +9,7 @@ import {
 const initialRouteState = {
   id: 0,
   sequences: [],
-  deletedSequences: []
+  removedSequences: []
 }
 
 const routeReducer = function (state = initialRouteState, action) {
@@ -20,8 +20,6 @@ const routeReducer = function (state = initialRouteState, action) {
 
 
     case FETCH_ROUTE_REQUEST: 
-      console.log('Fetching Route-Id', action.routeId)
-      console.log(state)
       return state
 
     case FETCH_ROUTE_SUCCESS:
