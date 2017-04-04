@@ -72,7 +72,6 @@ export function alterSequence(index, change, sequence, field) {
   change: change,
   field: field
   })
-  console.log('ALTER',change);
 }
 
 export const MOVE_SEQUENCE = 'MOVE_SEQUENCE'
@@ -165,15 +164,16 @@ export function saveRoute(routeId) {
               }
             )
       .then( response => inspectHttpStatus(response) )
-      .then( dispatch(saveRouteSuccess( routeId ) ))
-      .then( dispatch(fetchRoute( routeId )))
+      .then( response => response.json() )
+      .then( json => dispatch(saveRouteSuccess( routeId, json ) ))
   }
 }
 
 export const SAVE_ROUTE_SUCCESS = 'SAVE_ROUTE_SUCCESS'
 
-function saveRouteSuccess( routeId ) {
+function saveRouteSuccess( routeId, json ) {
   return {
-    type: SAVE_ROUTE_SUCCESS
+    type: SAVE_ROUTE_SUCCESS,
+    route: json
   }
 }

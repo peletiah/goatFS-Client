@@ -2,7 +2,8 @@ import update from 'immutability-helper';
 import ItemTypes from './ItemTypes';
 import {
   ADD_SEQUENCE, ALTER_SEQUENCE, MOVE_SEQUENCE, RENUMBER_SEQUENCES,
-  REMOVE_SEQUENCE, ADD_BRIDGE_TARGET, FETCH_ROUTE_REQUEST, FETCH_ROUTE_SUCCESS
+  REMOVE_SEQUENCE, ADD_BRIDGE_TARGET, FETCH_ROUTE_REQUEST, FETCH_ROUTE_SUCCESS,
+  SAVE_ROUTE_SUCCESS
 } from './Actions'
 
 
@@ -71,6 +72,8 @@ const routeReducer = function (state = initialRouteState, action) {
       // A sequence has been moved to a different position
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
+      const hoverSequence = sequences[hoverIndex]
+      
       return update(state, 
         { sequences:
           {
@@ -118,17 +121,16 @@ const routeReducer = function (state = initialRouteState, action) {
         }      
       });
 
-    /*case UPDATE_ROUTE:
+    case SAVE_ROUTE_SUCCESS:
+      console.log('SAVE_ROUTE_SUCCESS:',action.route)
       return Object.assign({}, state, { 
         id: action.route.id, 
         sequences: action.route.sequences 
       });
-      */
 
     default:
       return state;
   }
 }
-
 
 export default routeReducer;

@@ -137,7 +137,7 @@ class renderSequenceForm extends Component {
   render() {
     const { formType, 
             input, 
-            defaultValue, 
+            cmdData, 
             data, 
             alterSequence, 
             changeHandler, 
@@ -196,7 +196,7 @@ class renderSequenceForm extends Component {
             textField       = 'target'
             valueField      = 'id'
             data            = { data }
-            defaultValue    = { defaultValue || [] }
+            value    = { cmdData || [] }
             placeholder     = { input.value.command.data_template } 
 						tagComponent    = { TagItem }
 						itemComponent   = { TagItem }
@@ -283,7 +283,7 @@ class Sequence extends Component {
             name                 = { `${sequenceField}` }
             component            = { renderSequenceForm }
             data                 = { applicationCatalog }
-						alterSequence = { alterSequence }
+						alterSequence        = { alterSequence }
             changeHandler        = { changeHandler }
             index                = { index }
           />
@@ -294,7 +294,7 @@ class Sequence extends Component {
               name                 = { `${sequenceField}` }
               component            = { renderSequenceForm }
               data                 = { sequenceFormArray.cmdData }
-					  	alterSequence = { alterSequence }
+					  	alterSequence        = { alterSequence }
               changeHandler        = { changeHandler }
               blurHandler          = { blurHandler }
               index                = { index }
@@ -307,8 +307,8 @@ class Sequence extends Component {
             name                 = { `${sequenceField}` }
             component            = { renderSequenceForm }
             data                 = { availableExtensions }
-            defaultValue         = { sequenceFormArray.cmdData }
-						alterSequence = { alterSequence }
+            cmdData              = { sequenceFormArray.cmdData }
+						alterSequence        = { alterSequence }
             changeHandler        = { changeHandler }
             addTarget            = { addTarget }
             index                = { index }
