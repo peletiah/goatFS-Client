@@ -149,30 +149,7 @@ class renderSequenceForm extends Component {
             overInput
           } = this.props
 
-    if (formType == 'Combobox') {
-      return (
-				<div className="action">
-      		<Combobox
-      		  value       = { input.value.command }
-            textField   = 'command'
-            valueField  = 'id'
-      		  data        = { data }
-            suggest     = { true } 
-      		  onChange    = { 
-							    event => { 
-								    changeHandler('routingForm', input.name+'.command', event); 
-								    alterSequence(index, event, input.value, 'command'); 
-							    } 
-						}
-            onMouseEnter = { event => ( hoverOverInput(event) ) }
-            onMouseLeave = { event => ( hoverOutOfInput(event) ) }
- 
-      		/>
-    		</div>
-      )
-    }
-
-    else if (formType == 'Input') {
+    if (formType == 'Input') {
 			return (
 				<div className="action rw-widget">
       		<input 
@@ -197,6 +174,29 @@ class renderSequenceForm extends Component {
 			)
 		}
 
+    else if (formType == 'Combobox') {
+      return (
+				<div className="action">
+      		<Combobox
+      		  value       = { input.value.command }
+            textField   = 'command'
+            valueField  = 'id'
+      		  data        = { data }
+            suggest     = { true } 
+      		  onChange    = { 
+							    event => { 
+								    changeHandler('routingForm', input.name+'.command', event); 
+								    alterSequence(index, event, input.value, 'command'); 
+							    } 
+						}
+            onMouseEnter = { event => ( hoverOverInput(event) ) }
+            onMouseLeave = { event => ( hoverOutOfInput(event) ) }
+ 
+      		/>
+    		</div>
+      )
+    }
+
     else if (formType == 'Multiselect') {
       return (
   			<div className="action">
@@ -204,7 +204,7 @@ class renderSequenceForm extends Component {
             textField       = 'target'
             valueField      = 'id'
             data            = { data }
-            value    = { cmdData || [] }
+            value           = { cmdData || [] }
             placeholder     = { input.value.command.data_template } 
 						tagComponent    = { MultiselectTargetStyle }
 						itemComponent   = { MultiselectTargetStyle }
@@ -298,61 +298,58 @@ class Sequence extends Component {
             component={renderSequenceOrder}
           />
 
-            <Field
-		  				formType        = 'Combobox'
-              name            = { `${sequenceField}` }
-              component       = { renderSequenceForm }
-              data            = { applicationCatalog }
-		  				alterSequence   = { alterSequence }
-              changeHandler   = { changeHandler }
-              index           = { index }
-              hoverOverInput  = { hoverOverInput }
-              hoverOutOfInput = { hoverOutOfInput }
-              overInput       = { overInput }
-            />
+          <Field
+		  			formType        = 'Combobox'
+            name            = { `${sequenceField}` }
+            component       = { renderSequenceForm }
+            data            = { applicationCatalog }
+		  			alterSequence   = { alterSequence }
+            changeHandler   = { changeHandler }
+            index           = { index }
+            hoverOverInput  = { hoverOverInput }
+            hoverOutOfInput = { hoverOutOfInput }
+            overInput       = { overInput }
+          />
           
-            {sequenceFormArray && sequenceFormArray.command.command != "bridge" &&           
-              <Field
-		  					formType      = 'Input'
-                name          = { `${sequenceField}` }
-                component     = { renderSequenceForm }
-                data          = { sequenceFormArray.cmdData }
-		  			  	alterSequence = { alterSequence }
-                changeHandler = { changeHandler }
-                blurHandler   = { blurHandler }
-                index         = { index }
-                hoverOverInput  = { hoverOverInput }
-                hoverOutOfInput = { hoverOutOfInput }
-                overInput       = { overInput }
- 
-              />
-            }
-
-            {sequenceFormArray && sequenceFormArray.command.command == "bridge" &&           
+          {sequenceFormArray.command.command != "bridge" &&           
             <Field
-		  				formType      = 'Multiselect'
+		  				formType      = 'Input'
               name          = { `${sequenceField}` }
               component     = { renderSequenceForm }
-              data          = { availableExtensions }
-              cmdData       = { sequenceFormArray.cmdData }
-		  				alterSequence = { alterSequence }
+              data          = { sequenceFormArray.cmdData }
+		  		  	alterSequence = { alterSequence }
               changeHandler = { changeHandler }
-              addTarget     = { addTarget }
+              blurHandler   = { blurHandler }
               index         = { index }
               hoverOverInput  = { hoverOverInput }
               hoverOutOfInput = { hoverOutOfInput }
               overInput       = { overInput }
+ 
             />
-            }
+          }
 
-          {sequenceFormArray &&
+          {sequenceFormArray.command.command == "bridge" &&           
+          <Field
+		  			formType      = 'Multiselect'
+            name          = { `${sequenceField}` }
+            component     = { renderSequenceForm }
+            data          = { availableExtensions }
+            cmdData       = { sequenceFormArray.cmdData }
+		  			alterSequence = { alterSequence }
+            changeHandler = { changeHandler }
+            addTarget     = { addTarget }
+            index         = { index }
+            hoverOverInput  = { hoverOverInput }
+            hoverOutOfInput = { hoverOutOfInput }
+            overInput       = { overInput }
+          />
+          }
+
           <Close
             index           = { index }
             sequenceId      = { sequenceFormArray.sequence_id }
             removeSequence  = { removeSequence }
           />
-          }
-
 
         </div>
     )
