@@ -33,23 +33,32 @@ const renderSequences = ({
   applicationCatalog, 
   changeHandler, 
   addTarget,
-  blurHandler 
+  blurHandler,
+  hoverOverInput,
+  hoverOutOfInput,
+  overInput
 }) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
-          <Sequence key={ `${sequenceField}.sequence` } 
-                index={ index }
-                alterSequence  = { alterSequence }
-                moveSequence    = { moveSequence }
-                removeSequence  = { removeSequence }
-                sequenceFormArray     = { sequenceFormArray[index] }
-                changeHandler         = { changeHandler }
-                addTarget       = { addTarget }
-                blurHandler           = { blurHandler }
-                availableExtensions   = { availableExtensions }
-                applicationCatalog    = { applicationCatalog } 
-                className="sequence" 
-                sequenceField={ sequenceField } />
+          <Sequence 
+                key                 = { `${sequenceField}.sequence` } 
+                index               = { index }
+                alterSequence       = { alterSequence }
+                moveSequence        = { moveSequence }
+                removeSequence      = { removeSequence }
+                sequenceFormArray   = { sequenceFormArray[index] }
+                changeHandler       = { changeHandler }
+                addTarget           = { addTarget }
+                blurHandler         = { blurHandler }
+                availableExtensions = { availableExtensions }
+                applicationCatalog  = { applicationCatalog } 
+                className           = "sequence" 
+                sequenceField       = { sequenceField }
+                hoverOverInput      = { hoverOverInput }
+                hoverOutOfInput     = { hoverOutOfInput }
+                overInput           = { overInput }
+ 
+            />
     )}
   </div>
 )
@@ -61,6 +70,11 @@ class Routing extends Component {
   constructor(props) {
     super(props);
     this.commitRoute = this.commitRoute.bind(this);
+    this.hoverOverInput = this.hoverOverInput.bind(this);
+    this.hoverOutOfInput = this.hoverOutOfInput.bind(this);
+    this.state = {
+      overInput: true,
+    };
   }
 
 
@@ -80,6 +94,18 @@ class Routing extends Component {
     const { dispatch } = this.props
     dispatch( saveRoute( routeId ))
   }
+
+  hoverOverInput()
+  {
+    // mouse is over input-field
+    this.setState({ overInput: true })
+  }
+
+  hoverOutOfInput()
+  {
+    // mouse moved out of input-field
+    this.setState({ overInput: false })
+  }
  
   render() {
     const { 
@@ -87,25 +113,33 @@ class Routing extends Component {
       applicationCatalog, 
       changeHandler, 
       blurHandler,
-      sequenceFormArray
+      sequenceFormArray,
     } = this.props
+
+    const { overInput } = this.state;
 
     if (sequenceFormArray) {
       return (
         <div>
           <button type="button" onClick={ addSequence }>Add Sequence</button>
-          <FieldArray name="sequences"
-              component   =  { renderSequences }
-              alterSequence = { alterSequence }
-              moveSequence = { moveSequence }
-              changeHandler = { changeHandler }
-              blurHandler = { blurHandler }
-              addTarget = { addTarget }
-              removeSequence = { removeSequence }
-              sequenceFormArray = { sequenceFormArray }
+
+          <FieldArray 
+              name                = "sequences"
+              component           = { renderSequences }
+              alterSequence       = { alterSequence }
+              moveSequence        = { moveSequence }
+              changeHandler       = { changeHandler }
+              blurHandler         = { blurHandler }
+              addTarget           = { addTarget }
+              removeSequence      = { removeSequence }
+              sequenceFormArray   = { sequenceFormArray }
               availableExtensions = { availableExtensions }
-              applicationCatalog = { applicationCatalog }
+              applicationCatalog  = { applicationCatalog }
+              hoverOverInput      = { this.hoverOverInput }
+              hoverOutOfInput     = { this.hoverOutOfInput }
+              overInput           = { overInput }
           />
+
           <button type="button" onClick={ this.commitRoute }>Save</button>
       </div>
       );
@@ -147,7 +181,7 @@ Routing = connect(
       initialValues: {
         sequences: state.route.sequences,
         availableExtensions: state.route.availableExtensions,
-        applicationCatalog: state.route.applicationCatalog
+        applicationCatalog: state.route.applicationCatalog,
       }
     }
   }
