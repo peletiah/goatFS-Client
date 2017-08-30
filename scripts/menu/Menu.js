@@ -3,11 +3,9 @@
 */
 
 import React from 'react';
-import { Link } from 'react-router';
-import Catalyst from 'react-catalyst';
-import reactMixin from 'react-mixin';
-import autobind from 'autobind-decorator';
+import { Link } from 'react-router-dom';
 import store from '../store/Store'
+import autobind from 'autobind-decorator'
 
 @autobind
 class Menu extends React.Component {
@@ -35,10 +33,12 @@ class Menu extends React.Component {
       .catch(e => console.log("Error "+e))
     }
 
-  renderMenu(key) {
+  menuItems(key) {
     return(
       <li className="nav-item" key={this.state.menu[key].id}>
-        <Link className="nav-link" to={this.state.menu[key].location}>{this.state.menu[key].name}</Link>
+        <Link className="nav-link" to={this.state.menu[key].location}>
+          {this.state.menu[key].name}
+        </Link>
       </li>
     )
   }
@@ -50,7 +50,7 @@ class Menu extends React.Component {
           <nav className="navbar navbar-light bg-faded">
             <a className="navbar-brand" href="/">GoatFS</a>
             <ul className="nav navbar-nav">
-            {Object.keys(this.state.menu).map(this.renderMenu)}
+              {Object.keys(this.state.menu).map(this.menuItems)}
             </ul>
             <form className="form-inline pull-xs-right">
               <input className="form-control" type="text" placeholder="Search"/>
@@ -62,4 +62,5 @@ class Menu extends React.Component {
     }
 
 };
-export default Menu
+
+export default Menu;

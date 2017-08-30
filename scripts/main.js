@@ -1,31 +1,51 @@
 import React  from 'react';
 import { render }  from 'react-dom';
 import { Provider } from 'react-redux'
-import { Router, browserHistory } from 'react-router';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
-import routes from './app/Router'
 import store from './store/Store'
+import Routing from './routing/Routing'
+import LoginForm from './app/LoginForm'
+import App from './app/App'
 
 /*
   Main
 */
 
   
-  function requireAuth(nextState, replace) {
+  function isAuthenticated() {
     console.log('Testing auth-status')
-    console.log(localStorage.loggedin)
-    if (localStorage.loggedin !== 'true') {
-      console.log('Not logged in, asking for credentials')
-      replace({
-        pathname: '/login',
-        state: {nextPathname: nextState.location.pathname }
-      })
-    }
+    if (localStorage.loggedin !== 'true') 
+      return false
+    else
+      return true
   }
+
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={ props => (
+    isAuthenticated() ? (
+      <Component {...props}/>
+    ) : (
+    <Redirect to={{
+      pathname: '/login',
+      state: { from: props.location }
+    }}/>
+  )
+  )}/>
+)
 
 render(
   <Provider store={store}>
-    <Router history={browserHistory} routes={routes}/>
+    <Router>
+      <div>
+        <App/>
+
+        <Route exact path="/" component={Routing}/>
+        <PrivateRoute path="/routing" component={Routing}/>
+        <Route path="/login" component={LoginForm}/>
+      </div>
+    </Router>
   </Provider>,
     document.querySelector('#main')
 )

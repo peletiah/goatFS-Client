@@ -10,6 +10,7 @@ import cookie from 'react-cookie';
 import Menu from '../menu/Menu';
 import LoginForm from './LoginForm';
 import store from '../store/Store'
+import { setCSRFToken } from './Actions';
 
 @autobind
 class App extends React.Component {
@@ -23,23 +24,7 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.setCSRFToken()
-    this.loggedIn()
-  }
-
-
-  setCSRFToken() {
-    console.log('Checking for csrf-cookie')
-    store.dispatch({
-      type: 'SET_CSRF_TOKEN',
-      csrfToken: cookie.load('csrf')
-    })
-    console.log('csrfToken is '+store.getState().appState.csrfToken)
-  }
-
-
-  loggedIn() {
-    return !!this.state.csrfToken
+    setCSRFToken()
   }
 
 
@@ -61,9 +46,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Menu csrfToken={this.state.csrfToken} {...this.props}/>
-        {this.props.children /*returns the components propagated by router*/
-        && React.cloneElement(this.props.children, {fetchLog: this.fetchLog, log: this.state.log, setCSRFToken: this.setCSRFToken, csrfToken: this.state.csrfToken})}
+        <Menu/>
       </div>
     )
   }

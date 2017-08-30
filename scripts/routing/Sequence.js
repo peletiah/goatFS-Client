@@ -127,7 +127,7 @@ var MultiselectTargetStyle = React.createClass({
     };
 
     return (
-      <span className = 'Select-value-label'>
+      <span className = 'select-value-label'>
         { typeIcon} {target.target }
       </span>);
   }
@@ -280,7 +280,6 @@ class Sequence extends Component {
             hoverOutOfInput,
             overInput      
           } = this.props
-
 
     let sequenceContent = (
       <div 

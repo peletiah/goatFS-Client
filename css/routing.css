@@ -59,26 +59,26 @@
 
 /* TODO move to react-widget less-files*/
 
-.Select-value-icon,
-.Select-value-label {
+.select-value-icon,
+.select-value-label {
   display: inline-block;
   vertical-align: middle;
 }
-.Select-value-label {
+.select-value-label {
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
   cursor: default;
   padding: 2px 5px;
 }
-.a.Select-value-label {
+.a.select-value-label {
   color: #007eff;
   cursor: pointer;
   text-decoration: none;
 }
-.a.Select-value-label:hover {
+.a.select-value-label:hover {
   text-decoration: underline;
 }
-.Select-value-icon {
+.select-value-icon {
   cursor: pointer;
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
@@ -87,14 +87,14 @@
   border-left: 1px solid rgba(0, 126, 255, 0.24);
   padding: 2px 5px 2px 4px;
 }
-.Select-value-icon:hover,
-.Select-value-icon:focus {
+.select-value-icon:hover,
+.select-value-icon:focus {
   background-color: #d8eafd;
   /* Fallback color for IE 8 */
   background-color: rgba(0, 113, 230, 0.08);
   color: #0071e6;
 }
-.Select-value-icon:active {
+.select-value-icon:active {
   background-color: #c2e0ff;
   /* Fallback color for IE 8 */
   background-color: rgba(0, 126, 255, 0.24);

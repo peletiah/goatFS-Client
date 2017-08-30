@@ -4,21 +4,19 @@
 
 import React from 'react';
 import Catalyst from 'react-catalyst';
-import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
+import { setCSRFToken } from './Actions';
+import { Redirect } from 'react-router-dom';
 
+@autobind
+class LoginForm extends React.Component {
 
-const LoginForm = React.createClass({
-
-  contextTypes: {
-    router: React.PropTypes.object
-  },
-
-  getInitialState() {
-    return {
-      error: false
+  constructor() {
+    super();
+    this.state =  {
+      redirectToReferrer: false
     }
-  },
+  }
 
   createLogin(event) {
     event.preventDefault()
@@ -28,7 +26,7 @@ const LoginForm = React.createClass({
     }
     this.props.authenticate(login);
     this.refs.loginForm.reset()
-  },
+  }
 
  authenticate(event) {
     event.preventDefault()
@@ -46,22 +44,25 @@ const LoginForm = React.createClass({
       },
       credentials: 'include'
     }).then(r => {
-        this.props.setCSRFToken()
-        console.log('Redirecting to nextPathname')
-        const { location } = this.props
-        console.log(this.props)
-        console.log(this.context)
-/*        if (location.state && location.state.nextPathname) {
-          this.context.router.replace(location.state.nextPathname)
-        } else {
-          this.context.router.replace('/')
-      }*/
+      setCSRFToken()
+      this.setState({ redirectToReferrer: true })
+      localStorage.loggedin = true
     })
     .catch(e => console.log("Error "+e))
-  },
+  }
 
 
   render() {
+    
+    const { from } = this.props.location.state || { from: { pathname: '/' } }
+    const { redirectToReferrer } = this.state
+
+    if (redirectToReferrer) {
+      return (
+        <Redirect to={from}/>
+      )
+    }
+
     return (
       <div>
         {console.log('Entered LoginForm')}
@@ -81,6 +82,6 @@ const LoginForm = React.createClass({
     )
   }
 
-})
+}
 
 export default LoginForm
