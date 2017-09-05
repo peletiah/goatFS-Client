@@ -3,7 +3,6 @@
 */
 
 import React from 'react';
-import Catalyst from 'react-catalyst';
 import autobind from 'autobind-decorator';
 import { setCSRFToken } from './Actions';
 import { Redirect } from 'react-router-dom';

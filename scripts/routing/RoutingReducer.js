@@ -2,16 +2,18 @@ import update from 'immutability-helper';
 import ItemTypes from './ItemTypes';
 import {
   ADD_SEQUENCE, ALTER_SEQUENCE, MOVE_SEQUENCE, RENUMBER_SEQUENCES,
-  REMOVE_SEQUENCE, ADD_BRIDGE_TARGET, FETCH_ROUTE_REQUEST, FETCH_ROUTE_SUCCESS,
-  SAVE_ROUTE_SUCCESS
+  REMOVE_SEQUENCE, ADD_BRIDGE_TARGET, FETCH_ROUTES_REQUEST, FETCH_ROUTES_SUCCESS, 
+  FETCH_ROUTE_REQUEST, FETCH_ROUTE_SUCCESS, SAVE_ROUTE_SUCCESS
 } from './Actions'
 
 
-const initialRouteState = {
-  id: 0,
-  sequences: [],
-  removedSequences: []
-}
+const initialRouteState = [
+  {
+    id: 0,
+    sequences: [],
+    removedSequences: []
+  }
+]
 
 const routeReducer = function (state = initialRouteState, action) {
 
@@ -19,6 +21,14 @@ const routeReducer = function (state = initialRouteState, action) {
 
   switch (action.type) {
 
+
+    case FETCH_ROUTES_REQUEST: 
+      return state
+
+    case FETCH_ROUTES_SUCCESS:
+      console.log('Successfully fetched routes',action)
+      console.log(action)
+      return action.routes 
 
     case FETCH_ROUTE_REQUEST: 
       return state

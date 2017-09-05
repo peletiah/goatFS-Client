@@ -8,7 +8,7 @@ import menuReducer from '../menu/MenuReducer';
 
 
 const reducers = combineReducers({
-  route: routeReducer,
+  routes: routeReducer,
   menu: menuReducer,
   form: formReducer,
   appState: appReducer

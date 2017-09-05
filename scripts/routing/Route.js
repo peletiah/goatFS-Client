@@ -167,11 +167,11 @@ const mapDispatchToProps = (dispatch) => ({
       changeHandler: bindActionCreators(change, dispatch)
       })
 
-// maps store.route to this.props
+// maps store.routes to this.props
 // this gets "this.props" into Route-component
-const mapStateToProps = function(store) {
-  return store.route
-}
+const mapStateToProps = (store) => ({
+  routes: store.routes
+})
 
 
 Route = connect(

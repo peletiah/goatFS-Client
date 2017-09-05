@@ -3,10 +3,7 @@
 */
 
 import React from 'react';
-import Catalyst from 'react-catalyst';
-import reactMixin from 'react-mixin';
 import autobind from 'autobind-decorator';
-import cookie from 'react-cookie';
 import Menu from '../menu/Menu';
 import LoginForm from './LoginForm';
 import store from '../store/Store'
@@ -52,4 +49,4 @@ class App extends React.Component {
   }
 };
 
-export default App    
+export default App

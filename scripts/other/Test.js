@@ -7,7 +7,6 @@ import Sortable from 'react-anything-sortable';
 import { sortable } from 'react-anything-sortable';
 import Link from 'valuelink'
 import { Input, TextArea, Select, Radio, Checkbox } from 'valuelink/tags'
-import shortid from 'shortid'
 
 @sortable
 class DemoHOCItem extends React.Component {

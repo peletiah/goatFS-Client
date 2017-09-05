@@ -1,8 +1,10 @@
 import store from '../store/Store'
 import fetch from 'isomorphic-fetch'
-import cookie from 'react-cookie'
+import Cookies from 'universal-cookie'
 
 export const SET_CSRF_TOKEN = 'SET_CSRF_TOKEN'
+
+const cookies = new Cookies();
 
 function inspectHttpStatus(response) {
   if (response.status >= 200 && response.status < 300 ) {
@@ -19,7 +21,7 @@ export function setCSRFToken() {
 	console.log('Checking for csrf-cookie')
 	store.dispatch({
 		type: SET_CSRF_TOKEN,
-		csrfToken: cookie.load('csrf')
+		csrfToken: cookies.get('csrf')
 	})
 	console.log('csrfToken is '+store.getState().appState.csrfToken)
 }

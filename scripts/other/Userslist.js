@@ -3,8 +3,6 @@
 */
 
 import React, {PropTypes} from 'react'
-import Catalyst from 'react-catalyst'
-import reactMixin from 'react-mixin'
 import autobind from 'autobind-decorator'
 import Modal from 'react-modal'
 import Link from 'valuelink'

@@ -16,6 +16,26 @@ function inspectHttpStatus(response) {
   }
 }
 
+export function fetchRoutes() {
+  const csrfToken = store.getState().appState.csrfToken
+  return function (dispatch) {
+    dispatch(fetchRoutesRequest())
+    return fetch(`http://api.goatfs.org:6543/routes/`, {
+                credentials: 'include',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': 'goatfs.org',
+                  'X-CSRF-TOKEN': csrfToken
+                }
+              }
+            )
+      .then( response => inspectHttpStatus(response) )
+      .then( response => response.json() )
+      .then( json => dispatch(fetchRoutesSuccess(json) ))
+  }
+}
+
 export function fetchRoute(routeId) {
   const csrfToken = store.getState().appState.csrfToken
   return function (dispatch) {
@@ -33,6 +53,24 @@ export function fetchRoute(routeId) {
       .then( response => inspectHttpStatus(response) )
       .then( response => response.json() )
       .then( json => dispatch(fetchRouteSuccess(routeId, json) ))
+  }
+}
+
+
+export const FETCH_ROUTES_REQUEST = 'FETCH_ROUTES_REQUEST'
+
+export function fetchRoutesRequest() {
+  return {
+    type: FETCH_ROUTES_REQUEST
+  }
+}
+
+export const FETCH_ROUTES_SUCCESS = 'FETCH_ROUTES_SUCCESS'
+
+function fetchRoutesSuccess( json ) {
+  return {
+    type: FETCH_ROUTES_SUCCESS,
+    routes: json
   }
 }
 
@@ -122,25 +160,6 @@ export function addTarget(index, new_target, sequence) {
   console.log('create Tag',new_target, sequence, index)
 };
 
-//export function fetchRoute(routeId) {
-//  const csrfToken = store.getState().appState.csrfToken
-//  return function (dispatch) {
-//    dispatch(fetchRouteRequest(routeId))
-//    return fetch(`http://api.goatfs.org:6543/route/${routeId}`, {
-//                credentials: 'include',
-//                headers: {
-//                  'Accept': 'application/json',
-//                  'Content-Type': 'application/json',
-//                  'Access-Control-Allow-Origin': 'goatfs.org',
-//                  'X-CSRF-TOKEN': csrfToken
-//                }
-//              }
-//            )
-//      .then( response => inspectHttpStatus(response) )
-//      .then( response => response.json() )
-//      .then( json => dispatch(fetchRouteSuccess(routeId, json) ))
-//  }
-//}
 
 
 export const SAVE_ROUTE = 'SAVE_ROUTE'
