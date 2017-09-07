@@ -45,8 +45,7 @@ render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <div>
-        <App/>
-
+        <App/> {/* replace with Menu, app/App/setCSRFToken() is the issue atm */} 
         <PrivateRoute exact path="/" component={Routes}/>
         <PrivateRoute path="/routes" component={Routes}/>
         <PrivateRoute path="/route/:id" component={Route}/>

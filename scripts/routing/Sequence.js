@@ -281,10 +281,14 @@ class Sequence extends Component {
             overInput      
           } = this.props
 
+    console.log("sequenceFormArray in Sequence", sequenceFormArray)
+    console.log("in Sequence", sequenceField, index)
+    console.log("sequenceFA.id:",sequenceFormArray,index)
+    console.log("sequenceFA.id:",sequenceFormArray[index].sequence_id)
     let sequenceContent = (
       <div 
           className="sequence" 
-          id = { sequenceFormArray.sequence_id}
+          id = { sequenceFormArray[index].sequence_id}
           style={{ 
                opacity: isDraggingTarget ? 0.4 : 1,
                border: isDraggingTarget ? '1px #444 dashed' : 'None',
@@ -310,12 +314,12 @@ class Sequence extends Component {
             overInput       = { overInput }
           />
           
-          {sequenceFormArray.command.command != "bridge" &&           
+          {sequenceFormArray[index].command.command != "bridge" &&           
             <Field
 		  				formType      = 'Input'
               name          = { `${sequenceField}` }
               component     = { renderSequenceForm }
-              data          = { sequenceFormArray.cmdData }
+              data          = { sequenceFormArray[index].cmdData }
 		  		  	alterSequence = { alterSequence }
               changeHandler = { changeHandler }
               blurHandler   = { blurHandler }
@@ -327,13 +331,13 @@ class Sequence extends Component {
             />
           }
 
-          {sequenceFormArray.command.command == "bridge" &&           
+          {sequenceFormArray[index].command.command == "bridge" &&           
           <Field
 		  			formType      = 'Multiselect'
             name          = { `${sequenceField}` }
             component     = { renderSequenceForm }
             data          = { availableExtensions }
-            cmdData       = { sequenceFormArray.cmdData }
+            cmdData       = { sequenceFormArray[index].cmdData }
 		  			alterSequence = { alterSequence }
             changeHandler = { changeHandler }
             addTarget     = { addTarget }
@@ -346,7 +350,7 @@ class Sequence extends Component {
 
           <Close
             index           = { index }
-            sequenceId      = { sequenceFormArray.sequence_id }
+            sequenceId      = { sequenceFormArray[index].sequence_id }
             removeSequence  = { removeSequence }
           />
 

@@ -28,8 +28,6 @@ export { getIndex}
 
 const routeReducer = function (state = initialRouteState, action) {
 
-  const sequences = state.sequences
-
   switch (action.type) {
 
 
@@ -38,7 +36,6 @@ const routeReducer = function (state = initialRouteState, action) {
 
     case FETCH_ROUTES_SUCCESS:
       console.log('Successfully fetched routes',action)
-      console.log(action)
       return action.routes 
 
     case FETCH_ROUTE_REQUEST: 
@@ -46,10 +43,7 @@ const routeReducer = function (state = initialRouteState, action) {
 
     case FETCH_ROUTE_SUCCESS:
       console.log('Successfully fetched route',action)
-      console.log('routeId',action.route.id)
-      console.log(state)
 			var routeIndex = getIndex(action.route.id,state,'id')
-			console.log(routeIndex)
 			if ( routeIndex == -1)
 			{
 				return [action.route]
@@ -62,19 +56,24 @@ const routeReducer = function (state = initialRouteState, action) {
     case ADD_SEQUENCE:
       // put sequence-numbers in an array and find the 
       // currently highest sequence-number
+      console.log("ADD SEQUENCE")
+      const routeIndex = getIndex(action.routeId,state,'id')
       var seqArray = [];
-      state.sequences.map(item => seqArray.push(item.sequence))
+      state[routeIndex].sequences.map(item => seqArray.push(item.sequence))
       let highest = Math.max.apply(Math, seqArray)
       // if sequences-Array is empty, we have to set `highest` manually 
       if (!isFinite(highest)) {
         highest=0
       }
+      //TODO change default-values of new sequence
       const newSequence = { sequence: highest+=1, sequence_id: -1, timeout: ItemTypes.DEFAULT_TIMEOUT, cmdData:[], command: { application_catalog_id: -1, command: "bridge", data_template: ""} }
       return update(state, {
-        sequences: {
-          $push: [newSequence]
+        [routeIndex]: {
+          sequences: {
+            $push: [newSequence]
+          }
         }
-        });
+      });
 
     case ALTER_SEQUENCE:
       // A Sequence has been modified

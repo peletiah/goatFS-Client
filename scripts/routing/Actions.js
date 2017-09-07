@@ -95,9 +95,10 @@ function fetchRouteSuccess( route ) {
 
 export const ADD_SEQUENCE = 'ADD_SEQUENCE'
 
-export function addSequence() {
+export function addSequence(routeId) {
   store.dispatch({
-    type: ADD_SEQUENCE
+    type: ADD_SEQUENCE,
+    routeId: routeId
   })      
 }
 

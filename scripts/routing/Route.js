@@ -49,7 +49,7 @@ const renderSequences = ({
                 alterSequence       = { alterSequence }
                 moveSequence        = { moveSequence }
                 removeSequence      = { removeSequence }
-                sequenceFormArray   = { sequenceFormArray[index] }
+                sequenceFormArray   = { sequenceFormArray }
                 changeHandler       = { changeHandler }
                 addTarget           = { addTarget }
                 blurHandler         = { blurHandler }
@@ -83,7 +83,6 @@ class Route extends Component {
 
   
   componentDidMount() {
-    console.log('Route componentDidMount props: ',this.props)
     const routeId = this.props.match.params.id
     const { dispatch } = this.props
     dispatch(fetchRoute(routeId))
@@ -93,8 +92,6 @@ class Route extends Component {
 
   commitRoute (e) {
     e.preventDefault()
-    console.log('saving route through dispatch', e)
-    console.log('commitRoute: ',this.props)
     const routeId = this.props.match.params.id
     const { dispatch } = this.props
     dispatch( saveRoute( routeId ))
@@ -111,6 +108,13 @@ class Route extends Component {
     // mouse moved out of input-field
     this.setState({ overInput: false })
   }
+
+  handleAddSequence(e)
+  {
+    e.preventDefault()
+    const routeId = Number(this.props.match.params.id)
+    addSequence(routeId)
+  }
  
   render() {
     const {
@@ -118,10 +122,11 @@ class Route extends Component {
       applicationCatalog,
       changeHandler, 
       blurHandler,
-      sequenceFormArray
+      sequenceFormArray,
+      match
     } = this.props
 
-    console.log(this.props)
+    const routeId = match.params.id
     console.log('sequenceFormArray',sequenceFormArray)
 
     const { overInput } = this.state;
@@ -129,7 +134,7 @@ class Route extends Component {
     if (sequenceFormArray) {
       return (
         <div>
-          <button type="button" onClick={ addSequence }>Add Sequence</button>
+          <button type="button" onClick={ this.handleAddSequence.bind(this) }>Add Sequence</button>
 
           <FieldArray 
               name                = "sequences"
@@ -159,17 +164,13 @@ class Route extends Component {
   }
 };
 
-function testbla(state) {
-  console.log('testbla',state)
+function getValuesByIndex(state) {
   const routeId = Number(state.router.location.pathname.slice(-1))
-  console.log("routeId",routeId, typeof(routeId))
   const routeIndex=getIndex(routeId,state.routes,'id')
-  console.log("routeIndex",routeIndex)
-  console.log(state.routes[routeIndex])
   if ( routeIndex == -1 )
-    return state.routes[0].sequences
+    return state.routes[0]
   else
-    return state.routes[routeIndex].sequences
+    return state.routes[routeIndex]
 }
 
 const FORM_NAME = 'routeForm'
@@ -192,15 +193,20 @@ const mapStateToProps = (store) => ({
   routes: store.routes
 })
 
+function testBla(state) {
+  return state
+}
 
+//Setup initial values for redux-form
+// http://redux-form.com/7.0.3/docs/api/FormValueSelector.md/
 Route = connect(
   state => {
     return {
-      sequenceFormArray: selector(state, "sequences"),
+      sequenceFormArray: selector(testBla(state), "sequences"),
       initialValues: {
-        sequences: testbla(state),
-        availableExtensions: state.routes[1].availableExtensions,
-        applicationCatalog: state.routes[1].applicationCatalog,
+        sequences: getValuesByIndex(state).sequences,
+        availableExtensions: getValuesByIndex(state).availableExtensions,
+        applicationCatalog: getValuesByIndex(state).applicationCatalog,
       }
     }
   }
