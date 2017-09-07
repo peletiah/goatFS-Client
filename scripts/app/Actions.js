@@ -1,4 +1,4 @@
-import store from '../store/Store'
+import { store } from '../store/Store'
 import fetch from 'isomorphic-fetch'
 import Cookies from 'universal-cookie'
 
@@ -18,10 +18,10 @@ function inspectHttpStatus(response) {
 }
 
 export function setCSRFToken() {
-	console.log('Checking for csrf-cookie')
+  //console.log('Checking for csrf-cookie')
 	store.dispatch({
 		type: SET_CSRF_TOKEN,
 		csrfToken: cookies.get('csrf')
 	})
-	console.log('csrfToken is '+store.getState().appState.csrfToken)
+  //console.log('csrfToken is '+store.getState().appState.csrfToken)
 }

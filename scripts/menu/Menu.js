@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import store from '../store/Store'
+import { store } from '../store/Store'
 import autobind from 'autobind-decorator'
 
 @autobind

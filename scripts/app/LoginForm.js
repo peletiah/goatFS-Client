@@ -43,16 +43,16 @@ class LoginForm extends React.Component {
       },
       credentials: 'include'
     }).then(r => {
-      setCSRFToken()
-      this.setState({ redirectToReferrer: true })
       localStorage.loggedin = true
+      this.setState({ redirectToReferrer: true })
+      setCSRFToken()
     })
     .catch(e => console.log("Error "+e))
   }
 
 
   render() {
-    
+
     const { from } = this.props.location.state || { from: { pathname: '/' } }
     const { redirectToReferrer } = this.state
 
@@ -64,7 +64,6 @@ class LoginForm extends React.Component {
 
     return (
       <div>
-        {console.log('Entered LoginForm')}
         <form ref="loginForm" onSubmit={this.authenticate}>
           <p>
             <label>Login</label><br/>

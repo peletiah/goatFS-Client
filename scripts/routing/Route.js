@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { withRouter } from 'react-router-dom'
 import { Field, FieldArray, reduxForm, formValueSelector, change, blur } from 'redux-form';
 import Sequence from './Sequence'
 import store from '../store/Store'
@@ -21,6 +22,8 @@ import {
   addTarget,
   saveRoute
 } from './Actions'
+
+import { getIndex } from './RouteReducer'
 
 const renderSequences = ({ 
   fields, 
@@ -80,7 +83,8 @@ class Route extends Component {
 
   
   componentDidMount() {
-    const routeId = 1
+    console.log('Route componentDidMount props: ',this.props)
+    const routeId = this.props.match.params.id
     const { dispatch } = this.props
     dispatch(fetchRoute(routeId))
     this.props.initialize()
@@ -90,7 +94,8 @@ class Route extends Component {
   commitRoute (e) {
     e.preventDefault()
     console.log('saving route through dispatch', e)
-    const routeId = 1
+    console.log('commitRoute: ',this.props)
+    const routeId = this.props.match.params.id
     const { dispatch } = this.props
     dispatch( saveRoute( routeId ))
   }
@@ -108,13 +113,16 @@ class Route extends Component {
   }
  
   render() {
-    const { 
+    const {
       availableExtensions, 
-      applicationCatalog, 
+      applicationCatalog,
       changeHandler, 
       blurHandler,
-      sequenceFormArray,
+      sequenceFormArray
     } = this.props
+
+    console.log(this.props)
+    console.log('sequenceFormArray',sequenceFormArray)
 
     const { overInput } = this.state;
 
@@ -151,8 +159,20 @@ class Route extends Component {
   }
 };
 
+function testbla(state) {
+  console.log('testbla',state)
+  const routeId = Number(state.router.location.pathname.slice(-1))
+  console.log("routeId",routeId, typeof(routeId))
+  const routeIndex=getIndex(routeId,state.routes,'id')
+  console.log("routeIndex",routeIndex)
+  console.log(state.routes[routeIndex])
+  if ( routeIndex == -1 )
+    return state.routes[0].sequences
+  else
+    return state.routes[routeIndex].sequences
+}
 
-const FORM_NAME = 'routingForm'
+const FORM_NAME = 'routeForm'
 
 Route = reduxForm({
     form: FORM_NAME,
@@ -167,8 +187,7 @@ const mapDispatchToProps = (dispatch) => ({
       changeHandler: bindActionCreators(change, dispatch)
       })
 
-// maps store.routes to this.props
-// this gets "this.props" into Route-component
+// puts store.routes into props for the component above
 const mapStateToProps = (store) => ({
   routes: store.routes
 })
@@ -179,14 +198,14 @@ Route = connect(
     return {
       sequenceFormArray: selector(state, "sequences"),
       initialValues: {
-        sequences: state.route.sequences,
-        availableExtensions: state.route.availableExtensions,
-        applicationCatalog: state.route.applicationCatalog,
+        sequences: testbla(state),
+        availableExtensions: state.routes[1].availableExtensions,
+        applicationCatalog: state.routes[1].applicationCatalog,
       }
     }
   }
 )(Route)
 
-Route = connect(mapStateToProps, mapDispatchToProps)(Route)
+Route = withRouter(connect(mapStateToProps, mapDispatchToProps)(Route))
 
 export default Route;

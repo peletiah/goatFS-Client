@@ -15,6 +15,17 @@ const initialRouteState = [
   }
 ]
 
+function getIndex(value, arr, prop) {
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i][prop] === value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+export { getIndex}
+
 const routeReducer = function (state = initialRouteState, action) {
 
   const sequences = state.sequences
@@ -35,12 +46,18 @@ const routeReducer = function (state = initialRouteState, action) {
 
     case FETCH_ROUTE_SUCCESS:
       console.log('Successfully fetched route',action)
-      return Object.assign({}, state, { 
-        id: action.route.id, 
-        sequences: action.route.sequences, 
-        availableExtensions: action.route.availableExtensions, 
-        applicationCatalog: action.route.applicationCatalog 
-      });
+      console.log('routeId',action.route.id)
+      console.log(state)
+			var routeIndex = getIndex(action.route.id,state,'id')
+			console.log(routeIndex)
+			if ( routeIndex == -1)
+			{
+				return [action.route]
+			}
+			
+     	return update(state, {
+		 			[routeIndex]: {$set: action.route}			
+     	 		});
 
     case ADD_SEQUENCE:
       // put sequence-numbers in an array and find the 

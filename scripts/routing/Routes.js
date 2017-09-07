@@ -1,5 +1,5 @@
 /*
-  Routing
+  Routes
 */
 
 import React, { Component } from 'react'
@@ -14,13 +14,13 @@ const RouteListItem = ({
     route
   }) => (
   <li className="list-group-item">
-    <Link className="list-group-item-action" to={`route/${route.id}`}>
-      {route.id}
+    <Link className="list-group-item-action" to={`/route/${route.id}`}>
+      Route {route.id}
     </Link>
   </li>
 )
 
-class Routing extends Component {
+class Routes extends Component {
 
   constructor(props) {
     super(props);
@@ -28,7 +28,6 @@ class Routing extends Component {
 
   componentDidMount() {
     const { fetchRoutes } = this.props;
-    console.log(this.props)
     fetchRoutes()
   };
 
@@ -37,7 +36,6 @@ class Routing extends Component {
 
   render() {
     const { routes } = this.props
-    console.log(routes)
     if (routes) {
       return(
         <div>
@@ -88,6 +86,6 @@ const mapDispatchToProps = (dispatch) => {
       }, dispatch);
 };
 
-Routing = connect(mapStateToProps, mapDispatchToProps)(Routing)
+Routes = connect(mapStateToProps, mapDispatchToProps)(Routes)
 
-export default Routing;
+export default Routes;

@@ -1,10 +1,15 @@
 import React  from 'react';
 import { render }  from 'react-dom';
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
-import store from './store/Store'
-import Routing from './routing/Routing'
+
+import { BrowserRouter, Route as ReactRoute, Redirect } from 'react-router-dom';
+
+import { ConnectedRouter, push} from 'react-router-redux'
+import createHistory from 'history/createBrowserHistory'
+
+import { store, history } from './store/Store'
+import Routes from './routing/Routes'
+import Route from './routing/Route'
 import LoginForm from './app/LoginForm'
 import App from './app/App'
 
@@ -13,18 +18,17 @@ import App from './app/App'
 */
 
   
-  function isAuthenticated() {
-    console.log('Testing auth-status')
+  function isAuthenticated(location) {
+    //console.log('Testing auth-status', location)
     if (localStorage.loggedin !== 'true') 
       return false
     else
       return true
   }
 
-
 const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={ props => (
-    isAuthenticated() ? (
+  <ReactRoute {...rest} render={ props => (
+    isAuthenticated(props.location) ? (
       <Component {...props}/>
     ) : (
     <Redirect to={{
@@ -35,17 +39,20 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   )}/>
 )
 
+console.log(store)
+
 render(
   <Provider store={store}>
-    <Router>
+    <ConnectedRouter history={history}>
       <div>
         <App/>
 
-        <Route exact path="/" component={Routing}/>
-        <PrivateRoute path="/routing" component={Routing}/>
-        <Route path="/login" component={LoginForm}/>
+        <PrivateRoute exact path="/" component={Routes}/>
+        <PrivateRoute path="/routes" component={Routes}/>
+        <PrivateRoute path="/route/:id" component={Route}/>
+        <ReactRoute path="/login" component={LoginForm}/>
       </div>
-    </Router>
+    </ConnectedRouter>
   </Provider>,
     document.querySelector('#main')
 )
