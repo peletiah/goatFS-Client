@@ -104,27 +104,30 @@ export function addSequence(routeId) {
 
 export const ALTER_SEQUENCE = 'ALTER_SEQUENCE'
 
-export function alterSequence(index, change, sequence, field) {
+export function alterSequence(index, change, sequence, field, routesIndex) {
   store.dispatch({
   type: ALTER_SEQUENCE,
   index: index,
   modifiedSequence: sequence,
   change: change,
-  field: field
+  field: field,
+  routesIndex: routesIndex
   })
 }
 
 export const MOVE_SEQUENCE = 'MOVE_SEQUENCE'
 
-export function moveSequence(dragIndex, hoverIndex) {
+export function moveSequence(dragIndex, hoverIndex, routesIndex) {
   store.dispatch({
     type:MOVE_SEQUENCE,
     hoverIndex: hoverIndex,
     dragIndex: dragIndex,
+    routesIndex: routesIndex
   })
 
   store.dispatch({
-    type:RENUMBER_SEQUENCES
+    type:RENUMBER_SEQUENCES,
+    routesIndex: routesIndex
   })
 }
 
@@ -137,27 +140,30 @@ export function renumberSequences() {
 
 export const REMOVE_SEQUENCE = 'REMOVE_SEQUENCE'
 
-export function removeSequence(index, sequenceId) {
+export function removeSequence(routesIndex, index, sequenceId) {
   console.log('delete sequence:',index, sequenceId)
   store.dispatch({
     type:REMOVE_SEQUENCE,
+    routesIndex: routesIndex,
     index: index,
     sequenceId: sequenceId
   })
-//TODO merge renumber and remove
+
   store.dispatch({
-    type:'RENUMBER_SEQUENCES'
+    type:'RENUMBER_SEQUENCES',
+    routesIndex: routesIndex
   })
 }
 
 export const ADD_BRIDGE_TARGET = 'ADD_BRIDGE_TARGET'
 
-export function addTarget(index, new_target, sequence) {
+export function addTarget(routesIndex, index, new_target, sequence) {
   store.dispatch({
-  type: ADD_BRIDGE_TARGET,
-  index: index,
-  new_target: new_target,
-  sequence: sequence,
+    type: ADD_BRIDGE_TARGET,
+    routesIndex: routesIndex,
+    index: index,
+    new_target: new_target,
+    sequence: sequence,
   })
   console.log('create Tag',new_target, sequence, index)
 };
@@ -166,10 +172,10 @@ export function addTarget(index, new_target, sequence) {
 
 export const SAVE_ROUTE = 'SAVE_ROUTE'
 
-export function saveRoute(routeId) {
+export function saveRoute(routeId, routesIndex) {
   //TODO limit getState() by routeId
-  const route = store.getState().routes
-  console.log("route",route)
+  const route = store.getState().routes[routesIndex]
+  console.log("save route",route)
   const csrfToken = store.getState().appState.csrfToken
   return function (dispatch) {
     return fetch(`http://api.goatfs.org:6543/route/${routeId}`, {
@@ -187,15 +193,20 @@ export function saveRoute(routeId) {
             )
       .then( response => inspectHttpStatus(response) )
       .then( response => response.json() )
-      .then( json => dispatch(saveRouteSuccess( routeId, json ) ))
+      .then( json => {
+        console.log(routesIndex, routeId, json)
+        dispatch(saveRouteSuccess(routesIndex, routeId, json))
+      })
   }
 }
 
 export const SAVE_ROUTE_SUCCESS = 'SAVE_ROUTE_SUCCESS'
 
-function saveRouteSuccess( routeId, json ) {
+function saveRouteSuccess(routesIndex, routeId, route ) {
   return {
     type: SAVE_ROUTE_SUCCESS,
-    route: json
+    routesIndex: routesIndex,
+    routeId: routeId,
+    route: route 
   }
 }

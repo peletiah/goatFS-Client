@@ -21,7 +21,11 @@ const sequenceSource = {
 const sequenceTarget = {
   hover(props, monitor, component) {
     const dragIndex = monitor.getItem().index;
-    const hoverIndex = props.index;
+    const hoverIndex = props.index
+    const {
+      routesIndex,
+      moveSequence
+    } = props
 
     // Don't replace items with themselves
     if (dragIndex === hoverIndex) {
@@ -55,7 +59,7 @@ const sequenceTarget = {
     }
 
     // Time to actually perform the action
-    props.moveSequence(dragIndex, hoverIndex);
+    props.moveSequence(dragIndex, hoverIndex, routesIndex);
 
     // Note: we're mutating the monitor item here!
     // Generally it's better to avoid mutations,
@@ -146,7 +150,9 @@ class renderSequenceForm extends Component {
             index,
             hoverOverInput,
             hoverOutOfInput,
-            overInput
+            overInput,
+            routesIndex,
+						formName
           } = this.props
 
     if (formType == 'Input') {
@@ -158,13 +164,13 @@ class renderSequenceForm extends Component {
             placeholder = { input.value.command.data_template } 
       			onChange    = { 
 						      event => {
-      			        changeHandler('routingForm', input.name+'.cmdData', event.target.value);
+      			        changeHandler(formName, input.name+'.cmdData', event.target.value);
       			      }
       			}
       			onBlur      = { 
       			      event => {
-      			        blurHandler('routingForm', input.name+'.cmdData', event.target.value); 
-      			        alterSequence(index, event.target.value, input.value, 'cmdData'); 
+      			        blurHandler(formName, input.name+'.cmdData', event.target.value); 
+      			        alterSequence(index, event.target.value, input.value, 'cmdData', routesIndex); 
       			      }
       			}
             onMouseEnter = { event => ( hoverOverInput(event) ) }
@@ -185,8 +191,8 @@ class renderSequenceForm extends Component {
             suggest     = { true } 
       		  onChange    = { 
 							    event => { 
-								    changeHandler('routingForm', input.name+'.command', event); 
-								    alterSequence(index, event, input.value, 'command'); 
+								    changeHandler(formName, input.name+'.command', event); 
+								    alterSequence(index, event, input.value, 'command', routesIndex); 
 							    } 
 						}
             onMouseEnter = { event => ( hoverOverInput(event) ) }
@@ -211,12 +217,12 @@ class renderSequenceForm extends Component {
             groupBy         = 'type'
             groupComponent  = { MultiselectGrouping }
             onCreate        = {(
-              new_target => addTarget(index, new_target, input.value) 
+              new_target => addTarget(routesIndex, index, new_target, input.value) 
             )}
             onChange        = { 
               event => { 
-              	changeHandler('routingForm', input.name+'.cmdData', event); 
-              	alterSequence(index, event, input.value, 'cmdData'); 
+              	changeHandler(formName, input.name+'.cmdData', event); 
+              	alterSequence(index, event, input.value, 'cmdData', routesIndex); 
               } 
             }
             onMouseEnter = { event => ( hoverOverInput(event) ) }
@@ -237,12 +243,12 @@ class renderSequenceForm extends Component {
 }
 
 
-const Close = ({ removeSequence, index, sequenceId  }) => (
+const Close = ({ removeSequence, routesIndex, index, sequenceId  }) => (
         <button 
           type        = "button" 
           className   = "close" 
           aria-label  = "Close" 
-          onClick     = { removeSequence.bind(null, index, sequenceId) } >
+          onClick     = { removeSequence.bind(null, routesIndex, index, sequenceId) } >
           <span aria-hidden="true">&times;</span>
         </button>
 )
@@ -262,7 +268,7 @@ class Sequence extends Component {
   };
 
     render() {
-    const { sequenceField,
+    let { sequenceField,
 						alterSequence,
             removeSequence,
 						addTarget,
@@ -271,24 +277,22 @@ class Sequence extends Component {
             isDraggingTarget,
             connectDragSource,
             connectDropTarget,
-            sequenceFormArray,
+            sequenceFormValues,
             availableExtensions, 
             applicationCatalog,
             changeHandler,
             blurHandler,
             hoverOverInput, 
             hoverOutOfInput,
-            overInput      
-          } = this.props
+            overInput,
+            routesIndex,
+						formName
+    } = this.props
 
-    console.log("sequenceFormArray in Sequence", sequenceFormArray)
-    console.log("in Sequence", sequenceField, index)
-    console.log("sequenceFA.id:",sequenceFormArray,index)
-    console.log("sequenceFA.id:",sequenceFormArray[index].sequence_id)
     let sequenceContent = (
       <div 
           className="sequence" 
-          id = { sequenceFormArray[index].sequence_id}
+          id = { sequenceFormValues.sequence_id}
           style={{ 
                opacity: isDraggingTarget ? 0.4 : 1,
                border: isDraggingTarget ? '1px #444 dashed' : 'None',
@@ -312,14 +316,16 @@ class Sequence extends Component {
             hoverOverInput  = { hoverOverInput }
             hoverOutOfInput = { hoverOutOfInput }
             overInput       = { overInput }
+            routesIndex     = { routesIndex }
+						formName				= { formName }
           />
           
-          {sequenceFormArray[index].command.command != "bridge" &&           
+          {sequenceFormValues.command.command != "bridge" &&           
             <Field
 		  				formType      = 'Input'
               name          = { `${sequenceField}` }
               component     = { renderSequenceForm }
-              data          = { sequenceFormArray[index].cmdData }
+              data          = { sequenceFormValues.cmdData }
 		  		  	alterSequence = { alterSequence }
               changeHandler = { changeHandler }
               blurHandler   = { blurHandler }
@@ -327,30 +333,35 @@ class Sequence extends Component {
               hoverOverInput  = { hoverOverInput }
               hoverOutOfInput = { hoverOutOfInput }
               overInput       = { overInput }
+              routesIndex     = { routesIndex }
+							formName				= { formName }
  
             />
           }
 
-          {sequenceFormArray[index].command.command == "bridge" &&           
+          {sequenceFormValues.command.command == "bridge" &&           
           <Field
-		  			formType      = 'Multiselect'
-            name          = { `${sequenceField}` }
-            component     = { renderSequenceForm }
-            data          = { availableExtensions }
-            cmdData       = { sequenceFormArray[index].cmdData }
-		  			alterSequence = { alterSequence }
-            changeHandler = { changeHandler }
-            addTarget     = { addTarget }
-            index         = { index }
+		  			formType      	= 'Multiselect'
+            name          	= { `${sequenceField}` }
+            component     	= { renderSequenceForm }
+            data          	= { availableExtensions }
+            cmdData       	= { sequenceFormValues.cmdData }
+		  			alterSequence 	= { alterSequence }
+            changeHandler 	= { changeHandler }
+            addTarget     	= { addTarget }
+            index         	= { index }
             hoverOverInput  = { hoverOverInput }
             hoverOutOfInput = { hoverOutOfInput }
             overInput       = { overInput }
+            routesIndex     = { routesIndex }
+						formName				= { formName }
           />
           }
 
           <Close
             index           = { index }
-            sequenceId      = { sequenceFormArray[index].sequence_id }
+            routesIndex     = { routesIndex }
+            sequenceId      = { sequenceFormValues.sequence_id }
             removeSequence  = { removeSequence }
           />
 

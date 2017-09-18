@@ -10,12 +10,12 @@ import {
 const initialRouteState = [
   {
     id: 0,
-    sequences: [],
-    removedSequences: []
+    sequences: []
   }
 ]
 
 function getIndex(value, arr, prop) {
+    //console.log('value:',value,'arr:',arr,'prop:',prop)
     for(var i = 0; i < arr.length; i++) {
         if(arr[i][prop] === value) {
             return i;
@@ -28,38 +28,42 @@ export { getIndex}
 
 const routeReducer = function (state = initialRouteState, action) {
 
-  switch (action.type) {
 
+
+  switch (action.type) {
 
     case FETCH_ROUTES_REQUEST: 
       return state
 
     case FETCH_ROUTES_SUCCESS:
-      console.log('Successfully fetched routes',action)
-      return action.routes 
+      console.log('Successfully fetched routes',action,state)
+      return update(state, 
+        {$set: action.routes}
+      )
 
     case FETCH_ROUTE_REQUEST: 
       return state
 
     case FETCH_ROUTE_SUCCESS:
       console.log('Successfully fetched route',action)
-			var routeIndex = getIndex(action.route.id,state,'id')
-			if ( routeIndex == -1)
+			var routesIndex = getIndex(action.route.id,state,'id')
+			if ( routesIndex == -1)
 			{
-				return [action.route]
+        return update(state,
+          {$set: [action.route]}
+        )
 			}
-			
      	return update(state, {
-		 			[routeIndex]: {$set: action.route}			
+		 			[routesIndex]: {$set: action.route}			
      	 		});
 
     case ADD_SEQUENCE:
       // put sequence-numbers in an array and find the 
       // currently highest sequence-number
       console.log("ADD SEQUENCE")
-      const routeIndex = getIndex(action.routeId,state,'id')
+      let routesIndex = getIndex(action.routeId,state,'id')
       var seqArray = [];
-      state[routeIndex].sequences.map(item => seqArray.push(item.sequence))
+      state[routesIndex].sequences.map(item => seqArray.push(item.sequence))
       let highest = Math.max.apply(Math, seqArray)
       // if sequences-Array is empty, we have to set `highest` manually 
       if (!isFinite(highest)) {
@@ -68,7 +72,7 @@ const routeReducer = function (state = initialRouteState, action) {
       //TODO change default-values of new sequence
       const newSequence = { sequence: highest+=1, sequence_id: -1, timeout: ItemTypes.DEFAULT_TIMEOUT, cmdData:[], command: { application_catalog_id: -1, command: "bridge", data_template: ""} }
       return update(state, {
-        [routeIndex]: {
+        [routesIndex]: {
           sequences: {
             $push: [newSequence]
           }
@@ -78,6 +82,7 @@ const routeReducer = function (state = initialRouteState, action) {
     case ALTER_SEQUENCE:
       // A Sequence has been modified
       var updatedSequence
+      console.log('ALTER_SEQUENCE',action)
       if (action.field == 'command')
         {
           updatedSequence = Object.assign({}, action.modifiedSequence, {command: action.change});
@@ -88,20 +93,28 @@ const routeReducer = function (state = initialRouteState, action) {
         };
       //$splice: replace one item in state.sequences at action.index
       return update(state, {
-        sequences: {
-          $splice: 
-            [[action.index,1,updatedSequence]]
+        [action.routesIndex]:
+        {
+          sequences: 
+          {
+            $splice: 
+              [[action.index,1,updatedSequence]]
+          }
         }
       });
 
     case MOVE_SEQUENCE:
+      let sequences = state[action.routesIndex].sequences
       // A sequence has been moved to a different position
+      console.log('MOVE_SEQUENCE',action)
       const { dragIndex, hoverIndex } = action
       const dragSequence = sequences[dragIndex]
       const hoverSequence = sequences[hoverIndex]
       
-      return update(state, 
-        { sequences:
+      return update(state, {
+        [action.routesIndex]:
+        {
+          sequences:
           {
             $splice: [
               [dragIndex, 1],
@@ -109,26 +122,35 @@ const routeReducer = function (state = initialRouteState, action) {
             ]
           }
         }
-      );
+      });
 
     case RENUMBER_SEQUENCES:
       let i=1
+      sequences = state[action.routesIndex].sequences
       const newSequences = []
       // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
-      state.sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
-      return update( state, { sequences: {$set: newSequences} } );
+      sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      return update(state, {
+        [action.routesIndex]:
+        {
+          sequences: 
+          {
+            $set: newSequences
+          }
+        }
+      });
 
 
     case REMOVE_SEQUENCE:
       const index = action.index
       return update(state, {
-        sequences: {
-          $splice:[
-            [index, 1]
-          ]
-        },
-        removedSequences: {
-          $push: [action.sequenceId]
+        [action.routesIndex]:
+        {
+          sequences: {
+            $splice:[
+              [index, 1]
+            ]
+          }
         }
       });
 
@@ -141,18 +163,21 @@ const routeReducer = function (state = initialRouteState, action) {
                           }); 
       //$splice: replace one item in state.sequences at action.index
       return update(state, {
-        sequences: 
+        [action.routesIndex]:
         {
-          $splice: [[action.index,1,action.sequence]]
-        }      
+          sequences: 
+          {
+            $splice: [[action.index,1,action.sequence]]
+          }      
+        }
       });
 
     case SAVE_ROUTE_SUCCESS:
       console.log('SAVE_ROUTE_SUCCESS:',action.route)
-      return Object.assign({}, state, { 
-        id: action.route.id, 
-        sequences: action.route.sequences 
-      });
+      console.log(action)
+     return update(state, {
+		 			[routesIndex]: {$set: action.route}			
+     });
 
     default:
       return state;

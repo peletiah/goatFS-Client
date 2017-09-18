@@ -39,7 +39,9 @@ const renderSequences = ({
   blurHandler,
   hoverOverInput,
   hoverOutOfInput,
-  overInput
+  overInput,
+  routesIndex,
+  formName
 }) => (
   <div className="route">
     {fields.map((sequenceField, index) => 
@@ -49,7 +51,7 @@ const renderSequences = ({
                 alterSequence       = { alterSequence }
                 moveSequence        = { moveSequence }
                 removeSequence      = { removeSequence }
-                sequenceFormArray   = { sequenceFormArray }
+                sequenceFormValues  = { sequenceFormArray[index] }
                 changeHandler       = { changeHandler }
                 addTarget           = { addTarget }
                 blurHandler         = { blurHandler }
@@ -60,7 +62,8 @@ const renderSequences = ({
                 hoverOverInput      = { hoverOverInput }
                 hoverOutOfInput     = { hoverOutOfInput }
                 overInput           = { overInput }
- 
+                routesIndex         = { routesIndex }
+                formName	          = { formName }
             />
     )}
   </div>
@@ -90,11 +93,12 @@ class Route extends Component {
   };
 
 
-  commitRoute (e) {
-    e.preventDefault()
+  commitRoute (event, routesIndex) {
+		console.log("commitRoute",routesIndex)
     const routeId = this.props.match.params.id
+    event.preventDefault()
     const { dispatch } = this.props
-    dispatch( saveRoute( routeId ))
+    dispatch( saveRoute( routeId, routesIndex ))
   }
 
   hoverOverInput()
@@ -118,20 +122,34 @@ class Route extends Component {
  
   render() {
     const {
-      availableExtensions, 
-      applicationCatalog,
       changeHandler, 
       blurHandler,
       sequenceFormArray,
-      match
+      match,
+      routes,
+			form
     } = this.props
 
-    const routeId = match.params.id
-    console.log('sequenceFormArray',sequenceFormArray)
+    const routeId = Number(match.params.id)
+
+    // don't render FieldArray as long as sequenceFormArray
+    // has not updated
+    let routesIndex, routesCount = -1
+    let availableExtensions, applicationCatalog;
+    if (sequenceFormArray)
+    {
+      routesIndex = getIndex(routeId, this.props.routes,'id')
+      const route = this.props.routes[routesIndex]
+      console.log('route',route)
+      routesCount = route.sequences.length
+      availableExtensions = route.availableExtensions
+      applicationCatalog = route.applicationCatalog
+    }
 
     const { overInput } = this.state;
+    console.log("props in Route", this.props)
 
-    if (sequenceFormArray) {
+    if (sequenceFormArray && sequenceFormArray.length == routesCount) {
       return (
         <div>
           <button type="button" onClick={ this.handleAddSequence.bind(this) }>Add Sequence</button>
@@ -151,26 +169,28 @@ class Route extends Component {
               hoverOverInput      = { this.hoverOverInput }
               hoverOutOfInput     = { this.hoverOutOfInput }
               overInput           = { overInput }
+              routesIndex         = { routesIndex }
+              formName	          = { form }
           />
 
-          <button type="button" onClick={ this.commitRoute }>Save</button>
+          <button type="button" onClick={(evt) => this.commitRoute(evt, routesIndex) }>Save</button>
       </div>
       );
     }
     else
       {
-        return(<div/>)
+        return(<div>nothing</div>)
       }
   }
 };
 
 function getValuesByIndex(state) {
   const routeId = Number(state.router.location.pathname.slice(-1))
-  const routeIndex=getIndex(routeId,state.routes,'id')
-  if ( routeIndex == -1 )
+  const routesIndex=getIndex(routeId,state.routes,'id')
+  if ( routesIndex == -1 )
     return state.routes[0]
   else
-    return state.routes[routeIndex]
+    return state.routes[routesIndex]
 }
 
 const FORM_NAME = 'routeForm'
@@ -180,8 +200,6 @@ Route = reduxForm({
     enableReinitialize: true
   }
 )(Route)
-
-const selector = formValueSelector(FORM_NAME)
 
 const mapDispatchToProps = (dispatch) => ({
       blurHandler: bindActionCreators(blur, dispatch),
@@ -193,20 +211,22 @@ const mapStateToProps = (store) => ({
   routes: store.routes
 })
 
-function testBla(state) {
-  return state
-}
+const FVselector = formValueSelector(FORM_NAME)
 
 //Setup initial values for redux-form
+// intialValues are put in props.initialValues
+// they are used to re-initialize the form/component 
+// when they change
+// http://redux-form.com/7.0.3/examples/initializeFromState/
 // http://redux-form.com/7.0.3/docs/api/FormValueSelector.md/
 Route = connect(
   state => {
     return {
-      sequenceFormArray: selector(testBla(state), "sequences"),
+      sequenceFormArray: FVselector(state, "sequences"),
       initialValues: {
         sequences: getValuesByIndex(state).sequences,
         availableExtensions: getValuesByIndex(state).availableExtensions,
-        applicationCatalog: getValuesByIndex(state).applicationCatalog,
+        applicationCatalog: getValuesByIndex(state).applicationCatalog	
       }
     }
   }
