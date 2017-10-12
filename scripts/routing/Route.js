@@ -79,7 +79,7 @@ class Route extends Component {
     this.hoverOverInput = this.hoverOverInput.bind(this);
     this.hoverOutOfInput = this.hoverOutOfInput.bind(this);
     this.state = {
-      overInput: true,
+      overInput: false,
     };
   }
 

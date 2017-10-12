@@ -127,9 +127,11 @@ const routeReducer = function (state = initialRouteState, action) {
     case RENUMBER_SEQUENCES:
       let i=1
       sequences = state[action.routesIndex].sequences
+      console.log(sequences)
       const newSequences = []
       // renumber the sequences to reflect the new order (e.g. 2,3,1 gets 1,2,3)
       sequences.map(function(item) {item.sequence=i, i+=1, newSequences.push(item)})
+      console.log(newSequences)
       return update(state, {
         [action.routesIndex]:
         {
