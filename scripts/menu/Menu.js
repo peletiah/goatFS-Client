@@ -46,18 +46,16 @@ class Menu extends React.Component {
 
     render() {
       return (
-        <div>
-          <nav className="navbar navbar-light bg-faded">
-            <a className="navbar-brand" href="/">GoatFS</a>
-            <ul className="nav navbar-nav">
-              {Object.keys(this.state.menu).map(this.menuItems)}
-            </ul>
-            <form className="form-inline pull-xs-right">
-              <input className="form-control" type="text" placeholder="Search"/>
-              <button className="btn btn-success-outline" type="submit">Search</button>
-            </form>
-          </nav>
-        </div>
+        <nav className="navbar navbar-expand-lg navbar-light bg-light">
+          <a className="navbar-brand" href="/">GoatFS</a>
+          <ul className="navbar-nav mr-auto">
+            {Object.keys(this.state.menu).map(this.menuItems)}
+          </ul>
+          <form className="form-inline my-2 my-lg-0">
+            <input className="form-control mr-sm-2" type="text" placeholder="Search"/>
+            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </nav>
       )
     }
 

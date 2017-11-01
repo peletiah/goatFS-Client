@@ -11,6 +11,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { withRouter } from 'react-router-dom'
 import { Field, FieldArray, reduxForm, formValueSelector, change, blur } from 'redux-form';
 import Sequence from './Sequence'
+import Condition from './Condition'
 import store from '../store/Store'
 import Multiselect from 'react-widgets/lib/Multiselect'
 import {
@@ -43,7 +44,7 @@ const renderSequences = ({
   routesIndex,
   formName
 }) => (
-  <div className="route">
+  <div className="route row">
     {fields.map((sequenceField, index) => 
           <Sequence 
                 key                 = { `${sequenceField}.sequence` } 
@@ -151,8 +152,12 @@ class Route extends Component {
 
     if (sequenceFormArray && sequenceFormArray.length == routesCount) {
       return (
-        <div>
-          <button type="button" onClick={ this.handleAddSequence.bind(this) }>Add Sequence</button>
+        <div className="container-fluid">
+
+          <Condition/>
+          <div className="row">
+            <button className="btn btn-outline-success" type="button" onClick={ this.handleAddSequence.bind(this) }>Add Sequence</button>
+          </div>
 
           <FieldArray 
               name                = "sequences"
@@ -173,7 +178,9 @@ class Route extends Component {
               formName	          = { form }
           />
 
-          <button type="button" onClick={(evt) => this.commitRoute(evt, routesIndex) }>Save</button>
+        <div className="row">
+          <button className="btn btn-outline-success mgn07" type="button" onClick={(evt) => this.commitRoute(evt, routesIndex) }>Save</button>
+        </div>
       </div>
       );
     }

@@ -291,7 +291,7 @@ class Sequence extends Component {
 
     let sequenceContent = (
       <div 
-          className="sequence" 
+          className="sequence row" 
           id = { sequenceFormValues.sequence_id}
           style={{ 
                opacity: isDraggingTarget ? 0.4 : 1,
